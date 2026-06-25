@@ -81,6 +81,7 @@ Each scene contains a list of audio objects. The schema supports both a top-leve
   - `startZ` *(number)*: Start coordinate on the height plane (range: `[0.0, 1.0]`).
   - `xformula`, `yformula`, `zformula` *(string, optional)*: Math formula evaluating trajectory offsets relative to time `t`. Positions are computed as `x(t) = startX + xformula(t)`.
   - `volume` *(string, optional)*: Math formula evaluating the volume envelope based on time `t` (defaults to `1.0` if omitted).
+  - `proximity_bass_boost` *(boolean, optional)*: If true, enables an acoustic low-shelf shelving crossover filter. When the sound approaches the front-center TV position at `(0.0, 1.0, 0.0)` closer than `0.2` distance, low frequencies (<120 Hz) are automatically amplified by up to `6.0 dB`, creating an immersive, realistic close-up chest slam or physical growl pop.
 
 ### Formula Expression Capabilities
 The expression evaluator supports:
