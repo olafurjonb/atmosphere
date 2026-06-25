@@ -18,7 +18,8 @@
         "xformula": "0.0",
         "yformula": "0.0",
         "zformula": "0.0",
-        "volume": "1.0"
+        "volume": "1.0",
+        "proximity_bass_boost": true
       }
     },
     {
@@ -32,13 +33,14 @@
         "loop": false
       },
       "spatial": {
-        "startX": -0.5,
-        "startY": 0.866025,
+        "startX": 0.0,
+        "startY": 1.0,
         "startZ": 0.0,
         "xformula": "0.0",
         "yformula": "0.0",
         "zformula": "0.0",
-        "volume": "0.95"
+        "volume": "0.95",
+        "proximity_bass_boost": true
       }
     },
     {
@@ -76,9 +78,9 @@
         "startY": 0.866025,
         "startZ": 0.0,
         "xformula": "0.0",
-        "yformula": "0.0",
+        "yformula": "1.0",
         "zformula": "0.0",
-        "volume": "0.95"
+        "volume": "2.0"
       }
     },
     {
@@ -98,7 +100,7 @@
         "xformula": "0.0",
         "yformula": "0.0",
         "zformula": "0.0",
-        "volume": "0.35"
+        "volume": "0.1"
       }
     },
     {
@@ -118,7 +120,7 @@
         "xformula": "0.0",
         "yformula": "0.0",
         "zformula": "0.0",
-        "volume": "0.35"
+        "volume": "0.1"
       }
     },
     {

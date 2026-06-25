@@ -203,6 +203,11 @@ pub fn compile_scene<P1: AsRef<Path>, P2: AsRef<Path>>(
         let start_f = (*start_frame).max(0) as usize;
         let end_f = (*end_frame).min(max_end_frame) as usize;
 
+        // State for dynamic proximity bass-boost filter (low-pass component)
+        let mut prev_low_val = 0.0_f32;
+        // 120 Hz crossover coefficient: alpha = 2 * pi * fc / fs
+        let alpha = (2.0 * std::f32::consts::PI * 120.0 / (target_sample_rate as f32)).min(1.0).max(0.0);
+
         for f in start_f..end_f {
             let t = f as f64 / target_rate_f;
             let t_local = t - obj.temporal.start_offset;
@@ -226,11 +231,34 @@ pub fn compile_scene<P1: AsRef<Path>, P2: AsRef<Path>>(
             // Evaluate trajectory and volume
             let (x, y, z, vol) = evaluator.evaluate(t);
 
+            // Dynamic low-shelf shelving filter for proximity bass boost
+            let processed_sample = if obj.spatial.proximity_bass_boost {
+                let low_val = alpha * src_sample + (1.0 - alpha) * prev_low_val;
+                prev_low_val = low_val;
+
+                // Distance relative to the TV position at (0.0, 1.0, 0.0)
+                let dx = x;
+                let dy = y - 1.0;
+                let dz = z;
+                let dist = (dx * dx + dy * dy + dz * dz).sqrt();
+                let bass_boost_db = if dist < 0.2 {
+                    (1.0 - dist) * 6.0
+                } else {
+                    0.0
+                };
+                let boost_factor = 10.0_f64.powf(bass_boost_db / 20.0) as f32;
+
+                let high_val = src_sample - low_val;
+                high_val + low_val * boost_factor
+            } else {
+                src_sample
+            };
+
             // Calculate panning
             let pan_gains = pan_3d(x, y, z);
 
             // Mix into output channels
-            let final_gain = src_sample * (vol as f32);
+            let final_gain = processed_sample * (vol as f32);
             for c in 0..NUM_CHANNELS {
                 mix_buffer[f * NUM_CHANNELS + c] += final_gain * (pan_gains[c] as f32);
             }
@@ -391,6 +419,59 @@ mod tests {
         assert!(non_zero_samples_found, "Expected to find audio in Channel 2 (Center)");
 
         // Clean up temporary files
+        let _ = fs::remove_file(test_src_wav);
+        let _ = fs::remove_file(test_jaff_path);
+        let _ = fs::remove_file(test_output_wav);
+    }
+
+    #[test]
+    fn test_proximity_bass_boost_compilation() {
+        let temp_dir = std::env::temp_dir();
+        let test_src_wav = temp_dir.join("test_bass_src.wav");
+        let test_jaff_path = temp_dir.join("test_bass_scene.jaff");
+        let test_output_wav = temp_dir.join("test_bass_output_714.wav");
+
+        // Write a 48000Hz WAV with 1.0s duration
+        write_test_sine_wav(&test_src_wav, 48000, 1.0);
+
+        // Define a scene with proximity_bass_boost enabled at the TV position (x=0, y=1, z=0)
+        let jaff_json = format!(
+            r#"{{
+                "title": "Bass Boost Test Scene",
+                "objects": [
+                    {{
+                        "metadata": {{
+                            "title": "Close Sound",
+                            "source_sound_file": "{}"
+                        }},
+                        "temporal": {{
+                            "start_offset": 0.0,
+                            "end_offset": 0.5,
+                            "loop": false
+                        }},
+                        "spatial": {{
+                            "startX": 0.0,
+                            "startY": 1.0,
+                            "startZ": 0.0,
+                            "xformula": "0.0",
+                            "yformula": "0.0",
+                            "zformula": "0.0",
+                            "volume": "1.0",
+                            "proximity_bass_boost": true
+                        }}
+                    }}
+                ]
+            }}"#,
+            test_src_wav.to_str().unwrap().replace('\\', "/")
+        );
+
+        fs::write(&test_jaff_path, jaff_json).unwrap();
+
+        compile_scene(&test_jaff_path, &test_output_wav).unwrap();
+
+        assert!(test_output_wav.exists());
+
+        // Clean up
         let _ = fs::remove_file(test_src_wav);
         let _ = fs::remove_file(test_jaff_path);
         let _ = fs::remove_file(test_output_wav);

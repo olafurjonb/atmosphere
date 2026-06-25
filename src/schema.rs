@@ -45,6 +45,8 @@ pub struct SpatialTrajectory {
     pub zformula: Option<String>,
     #[serde(default)]
     pub volume: Option<String>,
+    #[serde(default, rename = "proximity_bass_boost")]
+    pub proximity_bass_boost: bool,
 }
 
 impl JaffScene {
