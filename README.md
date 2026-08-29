@@ -75,15 +75,15 @@ Run the compiler by passing the path to the scene definition file (`.jaff`) and 
 
 ## 🚀 Showroom Demos (Try These!)
 
-To keep the repository **100% legal, clean, and lightweight**, ASSC does not bundle heavy copyrighted audio files. Instead, it includes a **Procedural Audio Synthesizer** that generates high-quality sound assets from pure mathematical equations directly on your machine!
+To keep the repository **100% legal, clean, and lightweight**, ASSC does not bundle heavy audio files. Instead, it includes a **Procedural Audio Synthesizer** that generates high-quality sound assets from pure mathematical equations directly on your machine!
 
-Before compiling the demos, generate the synthetic assets:
+Before compiling the demo, generate the synthetic assets:
 ```bash
 python3 generate_assets.py
 ```
-This will instantly synthesize laser zaps, helicopter rotors, Spitfire V12 engines, and Stuka wind whistles in your `assets/` directory.
+This will instantly synthesize Spitfire V12 engines, Stuka wind whistles, machine gun bursts, and bomb blasts in your `assets/` directory.
 
-### Demo 1: The WWII Battle of Britain Dogfight 🛩️💥
+### Flagship Demo: The WWII Battle of Britain Dogfight 🛩️💥
 A historic aerial battle featuring engine takeoffs, close climbs, high-speed flybys, and a sudden ground-level rifle blast.
 *   **The Scene:** A Stuka dive-bomber screams down from the ceiling. A bomb detonates on the floor, shaking the subwoofer. A Spitfire Merlin V12 chases it overhead, firing machine guns. 
 *   **The Jump Scare:** After a brief silence, an authentic **M1 Garand Rifle Shot** blasts at ground-level directly behind your head (`startX: 0, startY: -1.0, startZ: 0`), panned 100% to the floor surrounds to make it sound like someone is standing in the room behind your couch!
@@ -94,32 +94,6 @@ A historic aerial battle featuring engine takeoffs, close climbs, high-speed fly
 *   **Play:**
     ```bash
     mpv --audio-channels=7.1 wwii_dogfight_output.wav
-    ```
-
-### Demo 2: The 90s Sci-Fi Demoscene 🎹👾
-An homage to the 1990s tracker-music demoscene culture, utilizing mathematical analog synth sweeps and orbiting objects.
-*   **The Scene:** An analog synth arpeggio circles your head. A spaceship rumbles diagonally overhead, laser zaps shoot straight out of the ceiling height speakers, and a synthetic chopper blade hovers in a tight, fast horizontal **figure-eight (infinity loop)** on the heights.
-*   **Compile:**
-    ```bash
-    ./target/release/atmosphere demo_scene.jaff sci_fi_demoscene.wav
-    ```
-*   **Play:**
-    ```bash
-    mpv --audio-channels=7.1 sci_fi_demoscene.wav
-    ```
-
-### Demo 3: The African Safari Ambient Showcase 🦁🐘
-A gorgeous, slow, organic 3D soundstage designed to test low-frequency crossovers and perimeter surrounds.
-*   **The Scene:** Lion growls deep in the subwoofer on the left, elephants blast on the right, crickets loop on the floor surround plane to envelop the room, and insects spin in a tight overhead circle on the ceiling.
-*   *(Note: This demo downloads public-domain Creative Commons files from GitHub)*
-*   **Fetch & Compile:**
-    ```bash
-    python3 download_safari.py
-    ./target/release/atmosphere safari_scene.jaff safari_output.wav
-    ```
-*   **Play:**
-    ```bash
-    mpv --audio-channels=7.1 safari_output.wav
     ```
 
 ---
