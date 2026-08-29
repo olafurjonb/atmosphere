@@ -1,0 +1,24 @@
+{
+  "title": "Spatially Circling Music",
+  "objects": [
+    {
+      "metadata": {
+        "title": "Dolly Parton - 9 to 5",
+        "source_sound_file": "assets/song.wav"
+      },
+      "temporal": {
+        "start_offset": 0.0,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 0.0,
+        "startY": 0.0,
+        "startZ": 0.0,
+        "xformula": "1.0 * cos(2 * pi * t / 15)",
+        "yformula": "1.0 * sin(2 * pi * t / 15)",
+        "zformula": "0.0",
+        "volume": "1.0"
+      }
+    }
+  ]
+}

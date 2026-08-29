@@ -1,0 +1,35 @@
+{
+  "title": "7.1 Surround Diagnostic Test",
+  "objects": [
+    {
+      "metadata": { "title": "1. Front Left (TV Left)", "source_sound_file": "assets/rotor.wav" },
+      "temporal": { "start_offset": 0.0, "end_offset": 1.5, "loop": false },
+      "spatial": { "startX": -1.0, "startY": 1.0, "startZ": 0.0 }
+    },
+    {
+      "metadata": { "title": "2. Front Right (TV Right)", "source_sound_file": "assets/rotor.wav" },
+      "temporal": { "start_offset": 2.0, "end_offset": 3.5, "loop": false },
+      "spatial": { "startX": 1.0, "startY": 1.0, "startZ": 0.0 }
+    },
+    {
+      "metadata": { "title": "3. Left Surround (Side)", "source_sound_file": "assets/rotor.wav" },
+      "temporal": { "start_offset": 4.0, "end_offset": 5.5, "loop": false },
+      "spatial": { "startX": -1.0, "startY": 0.0, "startZ": 0.0 }
+    },
+    {
+      "metadata": { "title": "4. Right Surround (Side)", "source_sound_file": "assets/rotor.wav" },
+      "temporal": { "start_offset": 6.0, "end_offset": 7.5, "loop": false },
+      "spatial": { "startX": 1.0, "startY": 0.0, "startZ": 0.0 }
+    },
+    {
+      "metadata": { "title": "5. Left Back (Rear Behind You)", "source_sound_file": "assets/rotor.wav" },
+      "temporal": { "start_offset": 8.0, "end_offset": 9.5, "loop": false },
+      "spatial": { "startX": -1.0, "startY": -1.0, "startZ": 0.0 }
+    },
+    {
+      "metadata": { "title": "6. Right Back (Rear Behind You)", "source_sound_file": "assets/rotor.wav" },
+      "temporal": { "start_offset": 10.0, "end_offset": 11.5, "loop": false },
+      "spatial": { "startX": 1.0, "startY": -1.0, "startZ": 0.0 }
+    }
+  ]
+}

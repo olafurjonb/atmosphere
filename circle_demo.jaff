@@ -1,0 +1,25 @@
+{
+  "title": "Circular Motion Demo Scene",
+  "objects": [
+    {
+      "metadata": {
+        "title": "Circling Rotor",
+        "source_sound_file": "assets/rotor.wav"
+      },
+      "temporal": {
+        "start_offset": 0.0,
+        "end_offset": 10.0,
+        "loop": true
+      },
+      "spatial": {
+        "startX": 0.0,
+        "startY": 0.0,
+        "startZ": 0.0,
+        "xformula": "1.0 * cos(2 * pi * t / 5)",
+        "yformula": "1.0 * sin(2 * pi * t / 5)",
+        "zformula": "0.0",
+        "volume": "1.0"
+      }
+    }
+  ]
+}

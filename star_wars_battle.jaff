@@ -1,0 +1,147 @@
+{
+  "title": "ASSC Star Wars TIE Fighter Spatial Attack (7.1.4 Dolby Atmos)",
+  "objects": [
+    {
+      "metadata": {
+        "title": "TIE Scout (Overhead Flyby 1)",
+        "source_sound_file": "assets/tie_flyby_1.wav"
+      },
+      "temporal": {
+        "start_offset": 0.5,
+        "end_offset": 3.7,
+        "loop": false
+      },
+      "spatial": {
+        "startX": -2.0,
+        "startY": -2.0,
+        "startZ": 0.1,
+        "xformula": "1.25 * (t - 0.5)",
+        "yformula": "1.25 * (t - 0.5)",
+        "zformula": "0.1 + 0.8 * sin(pi * (t - 0.5) / 3.2)",
+        "volume": "1.0",
+        "proximity_bass_boost": false
+      }
+    },
+    {
+      "metadata": {
+        "title": "TIE Scout Laser Fire",
+        "source_sound_file": "assets/tie_blast_1.wav"
+      },
+      "temporal": {
+        "start_offset": 2.5,
+        "end_offset": 3.5,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 1.2,
+        "startY": 1.2,
+        "startZ": 0.8,
+        "xformula": "0.0",
+        "yformula": "0.0",
+        "zformula": "0.0",
+        "volume": "1.0"
+      }
+    },
+    {
+      "metadata": {
+        "title": "TIE Interceptor 1 (Diagonally Crossing Left-Rear)",
+        "source_sound_file": "assets/tie_flyby_2.wav"
+      },
+      "temporal": {
+        "start_offset": 4.5,
+        "end_offset": 10.4,
+        "loop": false
+      },
+      "spatial": {
+        "startX": -1.5,
+        "startY": 1.5,
+        "startZ": 0.3,
+        "xformula": "0.5 * (t - 4.5)",
+        "yformula": "-0.5 * (t - 4.5)",
+        "zformula": "0.3 + 0.5 * sin(pi * (t - 4.5) / 5.9)",
+        "volume": "1.0"
+      }
+    },
+    {
+      "metadata": {
+        "title": "TIE Interceptor 2 (Diagonally Crossing Right-Rear)",
+        "source_sound_file": "assets/tie_flyby_3.wav"
+      },
+      "temporal": {
+        "start_offset": 5.0,
+        "end_offset": 11.2,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 1.5,
+        "startY": 1.5,
+        "startZ": 0.2,
+        "xformula": "-0.5 * (t - 5.0)",
+        "yformula": "-0.5 * (t - 5.0)",
+        "zformula": "0.2 + 0.6 * sin(pi * (t - 5.0) / 6.2)",
+        "volume": "1.0"
+      }
+    },
+    {
+      "metadata": {
+        "title": "TIE Fighter 4 (Ceiling Panic Circle)",
+        "source_sound_file": "assets/tie_flyby_4.wav"
+      },
+      "temporal": {
+        "start_offset": 11.0,
+        "end_offset": 14.5,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 0.0,
+        "startY": 0.0,
+        "startZ": 0.9,
+        "xformula": "0.9 * cos(2 * pi * (t - 11.0) * 0.8)",
+        "yformula": "0.9 * sin(2 * pi * (t - 11.0) * 0.8)",
+        "zformula": "0.0",
+        "volume": "1.0"
+      }
+    },
+    {
+      "metadata": {
+        "title": "Ceiling Blaster Fire",
+        "source_sound_file": "assets/tie_blast_2.wav"
+      },
+      "temporal": {
+        "start_offset": 11.5,
+        "end_offset": 13.9,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 0.0,
+        "startY": 0.0,
+        "startZ": 0.9,
+        "xformula": "0.9 * cos(2 * pi * (t - 11.0) * 0.8)",
+        "yformula": "0.9 * sin(2 * pi * (t - 11.0) * 0.8)",
+        "zformula": "0.0",
+        "volume": "1.0"
+      }
+    },
+    {
+      "metadata": {
+        "title": "TIE Swarm Climax Explosion",
+        "source_sound_file": "assets/tie_explosion.wav"
+      },
+      "temporal": {
+        "start_offset": 14.3,
+        "end_offset": 18.2,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 0.0,
+        "startY": 0.3,
+        "startZ": 0.8,
+        "xformula": "0.0",
+        "yformula": "0.0",
+        "zformula": "0.0",
+        "volume": "1.8",
+        "proximity_bass_boost": true
+      }
+    }
+  ]
+}

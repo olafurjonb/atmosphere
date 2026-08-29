@@ -1,0 +1,25 @@
+{
+  "title": "ASSC African Safari Ambient TV Demo (7.1.4 Dolby Atmos)",
+  "objects": [
+    {
+      "metadata": {
+        "title": "African Bird (Diagonally Flying Overhead)",
+        "source_sound_file": "assets/bird.wav"
+      },
+      "temporal": {
+        "start_offset": 2.0,
+        "end_offset": 13.0,
+        "loop": true
+      },
+      "spatial": {
+        "startX": -0.6,
+        "startY": 1 ,
+        "startZ": 1.0,
+        "xformula": "0.1 * (t - 2.0)",
+        "yformula": "-0.1 * (t - 2.0)",
+        "zformula": "0.0",
+        "volume": "0.65 + t *2 "
+      }
+    }
+  ]
+}

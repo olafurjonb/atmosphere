@@ -4,21 +4,40 @@ use crate::formula::calculate_culling_attenuation;
 /// Total channels in 7.1.4 layout.
 pub const NUM_CHANNELS: usize = 12;
 
-/// Channel indices:
+/// Channel indices (Standard WAV Extensible Order):
 /// 0: L (Left)
 /// 1: R (Right)
 /// 2: C (Center)
 /// 3: LFE (Low Frequency Effects)
-/// 4: Ls (Left Surround)
-/// 5: Rs (Right Surround)
-/// 6: Lb (Left Back)
-/// 7: Rb (Right Back)
+/// 4: Lb (Left Back)
+/// 5: Rb (Right Back)
+/// 6: Ls (Left Surround)
+/// 7: Rs (Right Surround)
 /// 8: Ltf (Left Top Front)
 /// 9: Rtf (Right Top Front)
 /// 10: Ltr (Left Top Rear)
 /// 11: Rtr (Right Top Rear)
 pub const CHANNEL_NAMES: [&str; NUM_CHANNELS] = [
-    "L", "R", "C", "LFE", "Ls", "Rs", "Lb", "Rb", "Ltf", "Rtf", "Ltr", "Rtr"
+    "L", "R", "C", "LFE", "Lb", "Rb", "Ls", "Rs", "Ltf", "Rtf", "Ltr", "Rtr"
+];
+
+/// Physical coordinates of the 7.1.4 speakers in the room (X, Y, Z).
+/// X: Left/Right (Left is negative)
+/// Y: Back/Front (Back is negative)
+/// Z: Height (0.0 is bed layer, 1.0 is height layer)
+pub const SPEAKER_POSITIONS: [(f64, f64, f64); NUM_CHANNELS] = [
+    (-0.5, 0.8660254, 0.0),        // 0: L (-30 deg)
+    (0.5, 0.8660254, 0.0),         // 1: R (+30 deg)
+    (0.0, 1.0, 0.0),               // 2: C (0 deg)
+    (0.0, 1.0, 0.0),               // 3: LFE
+    (-0.5, -0.8660254, 0.0),       // 4: Lb (-150 deg)
+    (0.5, -0.8660254, 0.0),        // 5: Rb (+150 deg)
+    (-0.9396926, -0.3420201, 0.0), // 6: Ls (-110 deg)
+    (0.9396926, -0.3420201, 0.0),  // 7: Rs (+110 deg)
+    (-1.0, 1.0, 1.0),              // 8: Ltf
+    (1.0, 1.0, 1.0),               // 9: Rtf
+    (-1.0, -1.0, 1.0),             // 10: Ltr
+    (1.0, -1.0, 1.0),              // 11: Rtr
 ];
 
 /// Computes the 12-channel gains for an object at position `(x, y, z)`.
@@ -119,11 +138,11 @@ fn bed_pairwise_panning(theta: f64) -> (usize, usize, f64, f64) {
     if theta >= -150.0 && theta < -110.0 {
         // Lb (Left Back: -150) to Ls (Left Surround: -110)
         let u = (theta - (-150.0)) / 40.0;
-        (6, 4, (u * FRAC_PI_2).cos(), (u * FRAC_PI_2).sin())
+        (4, 6, (u * FRAC_PI_2).cos(), (u * FRAC_PI_2).sin())
     } else if theta >= -110.0 && theta < -30.0 {
         // Ls (Left Surround: -110) to L (Left: -30)
         let u = (theta - (-110.0)) / 80.0;
-        (4, 0, (u * FRAC_PI_2).cos(), (u * FRAC_PI_2).sin())
+        (6, 0, (u * FRAC_PI_2).cos(), (u * FRAC_PI_2).sin())
     } else if theta >= -30.0 && theta < 0.0 {
         // L (Left: -30) to C (Center: 0)
         let u = (theta - (-30.0)) / 30.0;
@@ -135,18 +154,18 @@ fn bed_pairwise_panning(theta: f64) -> (usize, usize, f64, f64) {
     } else if theta >= 30.0 && theta < 110.0 {
         // R (Right: 30) to Rs (Right Surround: 110)
         let u = (theta - 30.0) / 80.0;
-        (1, 5, (u * FRAC_PI_2).cos(), (u * FRAC_PI_2).sin())
+        (1, 7, (u * FRAC_PI_2).cos(), (u * FRAC_PI_2).sin())
     } else if theta >= 110.0 && theta < 150.0 {
         // Rs (Right Surround: 110) to Rb (Right Back: 150)
         let u = (theta - 110.0) / 40.0;
-        (5, 7, (u * FRAC_PI_2).cos(), (u * FRAC_PI_2).sin())
+        (7, 5, (u * FRAC_PI_2).cos(), (u * FRAC_PI_2).sin())
     } else {
         // Rb (Right Back: 150) to Lb (Left Back: -150)
         // Angle wraps around 180 degrees.
         let norm_theta = if theta < 0.0 { theta + 360.0 } else { theta };
         // norm_theta is in [150.0, 210.0]
         let u = (norm_theta - 150.0) / 60.0;
-        (7, 6, (u * FRAC_PI_2).cos(), (u * FRAC_PI_2).sin())
+        (5, 4, (u * FRAC_PI_2).cos(), (u * FRAC_PI_2).sin())
     }
 }
 

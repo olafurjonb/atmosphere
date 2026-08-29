@@ -5,7 +5,7 @@ use std::fmt;
 
 use crate::schema::JaffScene;
 use crate::formula::TrajectoryEvaluator;
-use crate::spatial::{pan_3d, NUM_CHANNELS};
+use crate::spatial::{pan_3d, NUM_CHANNELS, SPEAKER_POSITIONS};
 
 #[derive(Debug)]
 pub enum CompilerError {
@@ -212,24 +212,35 @@ pub fn compile_scene<P1: AsRef<Path>, P2: AsRef<Path>>(
             let t = f as f64 / target_rate_f;
             let t_local = t - obj.temporal.start_offset;
 
-            // Determine index in source file
-            let src_sample_exact = if obj.temporal.loop_sound {
-                let t_local_looped = t_local % source_duration_sec;
-                t_local_looped * original_rate_f
-            } else {
-                t_local * original_rate_f
-            };
-
-            // Check boundaries
-            if src_sample_exact < 0.0 || src_sample_exact >= source_len_frames as f64 {
-                continue; // Past end of sound, not looping
-            }
-
-            // Read source sample with on-the-fly resampling
-            let src_sample = get_sample_resampled(&audio.samples, original_rate_f, target_rate_f, src_sample_exact);
-
             // Evaluate trajectory and volume
             let (x, y, z, vol) = evaluator.evaluate(t);
+
+            // Calculate panning
+            let pan_gains = pan_3d(x, y, z);
+
+            // Calculate distance from object to listener (origin 0,0,0)
+            let dist_to_listener = (x * x + y * y + z * z).sqrt();
+
+            // Calculate delay. Assume 1 coordinate unit = 5.0 meters. Speed of sound = 343.0 m/s.
+            let delay_sec = dist_to_listener * 5.0 / 343.0;
+            let t_delayed = t_local - delay_sec;
+
+            // Determine index in source file
+            let src_sample_exact = if obj.temporal.loop_sound {
+                let mut t_local_looped = t_delayed % source_duration_sec;
+                if t_local_looped < 0.0 {
+                    t_local_looped += source_duration_sec;
+                }
+                t_local_looped * original_rate_f
+            } else {
+                t_delayed * original_rate_f
+            };
+
+            let src_sample = if src_sample_exact < 0.0 || src_sample_exact >= source_len_frames as f64 {
+                0.0
+            } else {
+                get_sample_resampled(&audio.samples, original_rate_f, target_rate_f, src_sample_exact)
+            };
 
             // Dynamic low-shelf shelving filter for proximity bass boost
             let processed_sample = if obj.spatial.proximity_bass_boost {
@@ -240,9 +251,9 @@ pub fn compile_scene<P1: AsRef<Path>, P2: AsRef<Path>>(
                 let dx = x;
                 let dy = y - 1.0;
                 let dz = z;
-                let dist = (dx * dx + dy * dy + dz * dz).sqrt();
-                let bass_boost_db = if dist < 0.2 {
-                    (1.0 - dist) * 6.0
+                let dist_tv = (dx * dx + dy * dy + dz * dz).sqrt();
+                let bass_boost_db = if dist_tv < 0.2 {
+                    (1.0 - dist_tv) * 6.0
                 } else {
                     0.0
                 };
@@ -253,9 +264,6 @@ pub fn compile_scene<P1: AsRef<Path>, P2: AsRef<Path>>(
             } else {
                 src_sample
             };
-
-            // Calculate panning
-            let pan_gains = pan_3d(x, y, z);
 
             // Mix into output channels
             let final_gain = processed_sample * (vol as f32);
@@ -281,24 +289,60 @@ pub fn compile_scene<P1: AsRef<Path>, P2: AsRef<Path>>(
         1.0
     };
 
-    // 5. Write out multi-channel WAV file
+    // 5. Write out multi-channel WAV file with WAVEFORMATEXTENSIBLE
     println!("Writing 7.1.4 multi-channel output to: {:?}", output_path.as_ref());
-    let spec = hound::WavSpec {
-        channels: NUM_CHANNELS as u16,
-        sample_rate: target_sample_rate,
-        bits_per_sample: 16,
-        sample_format: hound::SampleFormat::Int,
-    };
+    
+    let mut file = std::fs::File::create(output_path)?;
+    use std::io::Write;
 
-    let mut writer = hound::WavWriter::create(output_path, spec)?;
+    let num_channels: u16 = 12;
+    let bits_per_sample: u16 = 16;
+    let byte_rate = target_sample_rate * (num_channels as u32) * (bits_per_sample as u32 / 8);
+    let block_align = num_channels * (bits_per_sample / 8);
+    let data_size = (mix_buffer.len() * 2) as u32; // 2 bytes per sample (i16)
+    let chunk_size = 36 + 24 + data_size; // 4 (WAVE) + 48 (fmt chunk including header) + 8 (data chunk header) + data_size - 8
+    let chunk_size = 68 + data_size; // RIFF total size minus 8
+
+    // RIFF header
+    file.write_all(b"RIFF")?;
+    file.write_all(&chunk_size.to_le_bytes())?;
+    file.write_all(b"WAVE")?;
+
+    // fmt chunk
+    file.write_all(b"fmt ")?;
+    file.write_all(&40u32.to_le_bytes())?; // Subchunk1Size (40 for extensible)
+    file.write_all(&0xFFFEu16.to_le_bytes())?; // AudioFormat (WAVE_FORMAT_EXTENSIBLE)
+    file.write_all(&num_channels.to_le_bytes())?;
+    file.write_all(&target_sample_rate.to_le_bytes())?;
+    file.write_all(&byte_rate.to_le_bytes())?;
+    file.write_all(&block_align.to_le_bytes())?;
+    file.write_all(&bits_per_sample.to_le_bytes())?;
+    
+    // Extensible specific
+    file.write_all(&22u16.to_le_bytes())?; // cbSize
+    file.write_all(&16u16.to_le_bytes())?; // ValidBitsPerSample
+    
+    // dwChannelMask for 7.1.4: FL|FR|FC|LFE|BL|BR|SL|SR|TFL|TFR|TBL|TBR = 0x2D63F
+    file.write_all(&0x2D63Fu32.to_le_bytes())?; 
+    
+    // SubFormat: KSDATAFORMAT_SUBTYPE_PCM
+    file.write_all(&[0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71])?;
+
+    // data chunk
+    file.write_all(b"data")?;
+    file.write_all(&data_size.to_le_bytes())?;
+
+    // Write samples
+    let mut out_buffer = Vec::with_capacity(mix_buffer.len() * 2);
     for sample in mix_buffer {
         let scaled_sample = sample * scale;
         let clamped = scaled_sample.clamp(-1.0, 1.0);
         let sample_i16 = (clamped * i16::MAX as f32) as i16;
-        writer.write_sample(sample_i16)?;
+        out_buffer.extend_from_slice(&sample_i16.to_le_bytes());
     }
+    file.write_all(&out_buffer)?;
+    file.flush()?;
 
-    writer.finalize()?;
     println!("Compilation successful!");
 
     Ok(())

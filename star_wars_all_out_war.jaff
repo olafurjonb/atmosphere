@@ -1,0 +1,228 @@
+{
+  "title": "ASSC Star Wars All-Out Space War (7.1.4 Dolby Atmos Showcase)",
+  "objects": [
+    {
+      "metadata": {
+        "title": "TIE Scout (Ambush Opener)",
+        "source_sound_file": "assets/tie_flyby_1.wav"
+      },
+      "temporal": {
+        "start_offset": 0.0,
+        "end_offset": 3.2,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 1.5,
+        "startY": 1.5,
+        "startZ": 0.2,
+        "xformula": "-1.0 * t",
+        "yformula": "-1.0 * t",
+        "zformula": "0.0",
+        "volume": "1.0",
+        "proximity_bass_boost": false
+      }
+    },
+    {
+      "metadata": {
+        "title": "TIE Scout Opening Laser Fire",
+        "source_sound_file": "assets/tie_blast_1.wav"
+      },
+      "temporal": {
+        "start_offset": 1.2,
+        "end_offset": 2.2,
+        "loop": false
+      },
+      "spatial": {
+        "startX": -0.5,
+        "startY": -0.5,
+        "startZ": 0.2,
+        "xformula": "0.0",
+        "yformula": "0.0",
+        "zformula": "0.0",
+        "volume": "1.0"
+      }
+    },
+    {
+      "metadata": {
+        "title": "TIE Interceptor 5 (Right-Side Piston Front)",
+        "source_sound_file": "assets/tie_flyby_5.wav"
+      },
+      "temporal": {
+        "start_offset": 3.0,
+        "end_offset": 8.3,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 1.2,
+        "startY": -2.0,
+        "startZ": 0.4,
+        "xformula": "0.0",
+        "yformula": "0.8 * (t - 3.0)",
+        "zformula": "0.0",
+        "volume": "1.0"
+      }
+    },
+    {
+      "metadata": {
+        "title": "TIE Interceptor 6 (Left-Side Piston Rear)",
+        "source_sound_file": "assets/tie_flyby_6.wav"
+      },
+      "temporal": {
+        "start_offset": 3.8,
+        "end_offset": 9.2,
+        "loop": false
+      },
+      "spatial": {
+        "startX": -1.2,
+        "startY": 2.0,
+        "startZ": 0.4,
+        "xformula": "0.0",
+        "yformula": "-0.8 * (t - 3.8)",
+        "zformula": "0.0",
+        "volume": "1.0"
+      }
+    },
+    {
+      "metadata": {
+        "title": "Heavy TIE Bomber (High Ceiling Diagonal)",
+        "source_sound_file": "assets/tie_flyby_2.wav"
+      },
+      "temporal": {
+        "start_offset": 7.0,
+        "end_offset": 12.9,
+        "loop": false
+      },
+      "spatial": {
+        "startX": -1.5,
+        "startY": 1.5,
+        "startZ": 0.3,
+        "xformula": "0.5 * (t - 7.0)",
+        "yformula": "-0.5 * (t - 7.0)",
+        "zformula": "0.3 + 0.6 * sin(pi * (t - 7.0) / 5.9)",
+        "volume": "1.0"
+      }
+    },
+    {
+      "metadata": {
+        "title": "Heavy Bomber Laser Barrage",
+        "source_sound_file": "assets/tie_blast_3.wav"
+      },
+      "temporal": {
+        "start_offset": 8.0,
+        "end_offset": 12.4,
+        "loop": false
+      },
+      "spatial": {
+        "startX": -1.5,
+        "startY": 1.5,
+        "startZ": 0.3,
+        "xformula": "0.5 * (t - 7.0)",
+        "yformula": "-0.5 * (t - 7.0)",
+        "zformula": "0.3 + 0.6 * sin(pi * (t - 7.0) / 5.9)",
+        "volume": "1.0"
+      }
+    },
+    {
+      "metadata": {
+        "title": "TIE Bomber Explodes (Front-Left Ceiling BOOM)",
+        "source_sound_file": "assets/tie_explosion.wav"
+      },
+      "temporal": {
+        "start_offset": 11.5,
+        "end_offset": 15.4,
+        "loop": false
+      },
+      "spatial": {
+        "startX": -0.8,
+        "startY": 0.8,
+        "startZ": 0.8,
+        "xformula": "0.0",
+        "yformula": "0.0",
+        "zformula": "0.0",
+        "volume": "1.5",
+        "proximity_bass_boost": true
+      }
+    },
+    {
+      "metadata": {
+        "title": "TIE Fighter 3 (Overhead Dogfight Spiral)",
+        "source_sound_file": "assets/tie_flyby_3.wav"
+      },
+      "temporal": {
+        "start_offset": 12.5,
+        "end_offset": 18.7,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 0.0,
+        "startY": 0.0,
+        "startZ": 0.9,
+        "xformula": "1.0 * cos(2 * pi * (t - 12.5) * 0.4)",
+        "yformula": "1.0 * sin(2 * pi * (t - 12.5) * 0.4)",
+        "zformula": "0.0",
+        "volume": "1.0"
+      }
+    },
+    {
+      "metadata": {
+        "title": "Overhead Spiral Panic Blaster",
+        "source_sound_file": "assets/tie_blast_2.wav"
+      },
+      "temporal": {
+        "start_offset": 14.0,
+        "end_offset": 16.4,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 0.0,
+        "startY": 0.0,
+        "startZ": 0.9,
+        "xformula": "1.0 * cos(2 * pi * (t - 12.5) * 0.4)",
+        "yformula": "1.0 * sin(2 * pi * (t - 12.5) * 0.4)",
+        "zformula": "0.0",
+        "volume": "1.0"
+      }
+    },
+    {
+      "metadata": {
+        "title": "Overhead TIE Explodes (MEGA-CEILING BOOM)",
+        "source_sound_file": "assets/tie_explosion.wav"
+      },
+      "temporal": {
+        "start_offset": 17.8,
+        "end_offset": 21.7,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 0.0,
+        "startY": 0.1,
+        "startZ": 0.9,
+        "xformula": "0.0",
+        "yformula": "0.0",
+        "zformula": "0.0",
+        "volume": "2.2",
+        "proximity_bass_boost": true
+      }
+    },
+    {
+      "metadata": {
+        "title": "Damaged Outro TIE Escape",
+        "source_sound_file": "assets/tie_flyby_4.wav"
+      },
+      "temporal": {
+        "start_offset": 19.5,
+        "end_offset": 23.0,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 0.0,
+        "startY": 1.5,
+        "startZ": 0.8,
+        "xformula": "0.0",
+        "yformula": "-0.9 * (t - 19.5)",
+        "zformula": "-0.15 * (t - 19.5)",
+        "volume": "0.85"
+      }
+    }
+  ]
+}

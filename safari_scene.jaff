@@ -19,7 +19,7 @@
         "yformula": "0.0",
         "zformula": "0.0",
         "volume": "1.0",
-        "proximity_bass_boost": true
+        "proximity_bass_boost": false 
       }
     },
     {
@@ -40,7 +40,7 @@
         "yformula": "0.0",
         "zformula": "0.0",
         "volume": "0.95",
-        "proximity_bass_boost": true
+        "proximity_bass_boost": false 
       }
     },
     {

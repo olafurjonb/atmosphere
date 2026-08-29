@@ -1,0 +1,106 @@
+{
+  "title": "ASSC WWII Authentic Aerial Battle (7.1.4 Dolby Atmos Showcase)",
+  "objects": [
+    {
+      "metadata": {
+        "title": "Spitfire V12 Warmup & Takeoff (Ground Left to Sky Right)",
+        "source_sound_file": "assets/real_ww2_takeoff.wav"
+      },
+      "temporal": {
+        "start_offset": 0.0,
+        "end_offset": 16.7,
+        "loop": false
+      },
+      "spatial": {
+        "startX": -1.2,
+        "startY": 1.2,
+        "startZ": 0.0,
+        "xformula": "1.2 * (t / 16.7) - 1.2",
+        "yformula": "1.2 - 1.2 * (t / 16.7)",
+        "zformula": "0.85 * (t / 16.7)",
+        "volume": "1.2"
+      }
+    },
+    {
+      "metadata": {
+        "title": "Airborne Fighter Patrol (Continuous Ceiling Circle)",
+        "source_sound_file": "assets/real_spitfire_close.wav"
+      },
+      "temporal": {
+        "start_offset": 3.0,
+        "end_offset": 28.0,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 0.0,
+        "startY": 0.0,
+        "startZ": 0.8,
+        "xformula": "1.0 * cos(2 * pi * (t - 3.0) * 0.04)",
+        "yformula": "1.0 * sin(2 * pi * (t - 3.0) * 0.04)",
+        "zformula": "0.0",
+        "volume": "0.95"
+      }
+    },
+    {
+      "metadata": {
+        "title": "Low-Altitude Strafe Run (Visceral Overhead Sweep)",
+        "source_sound_file": "assets/real_low_flyby.wav"
+      },
+      "temporal": {
+        "start_offset": 12.0,
+        "end_offset": 24.5,
+        "loop": false
+      },
+      "spatial": {
+        "startX": -1.8,
+        "startY": -1.8,
+        "startZ": 0.2,
+        "xformula": "0.3 * (t - 12.0)",
+        "yformula": "0.3 * (t - 12.0)",
+        "zformula": "0.0",
+        "volume": "1.3"
+      }
+    },
+    {
+      "metadata": {
+        "title": "The M1 Garand Shot (Ground Rear Jump Scare!)",
+        "source_sound_file": "assets/real_m1_garand.wav"
+      },
+      "temporal": {
+        "start_offset": 24.7,
+        "end_offset": 27.5,
+        "loop": false
+      },
+      "spatial": {
+        "startX": 0.0,
+        "startY": -1.0,
+        "startZ": 0.0,
+        "xformula": "0.0",
+        "yformula": "0.0",
+        "zformula": "0.0",
+        "volume": "2.5",
+        "proximity_bass_boost": true
+      }
+    },
+    {
+      "metadata": {
+        "title": "Distant Escaping Wingman (Front Left to Front Right)",
+        "source_sound_file": "assets/real_ww2_flypast.wav"
+      },
+      "temporal": {
+        "start_offset": 26.5,
+        "end_offset": 36.5,
+        "loop": false
+      },
+      "spatial": {
+        "startX": -1.5,
+        "startY": 1.2,
+        "startZ": 0.5,
+        "xformula": "0.3 * (t - 26.5)",
+        "yformula": "0.0",
+        "zformula": "0.0",
+        "volume": "1.0"
+      }
+    }
+  ]
+}

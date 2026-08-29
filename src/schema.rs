@@ -5,6 +5,8 @@ use std::path::PathBuf;
 pub struct JaffScene {
     #[serde(default)]
     pub title: Option<String>,
+    #[serde(default)]
+    pub layout: Option<String>,
     pub objects: Vec<JaffObject>,
 }
 
@@ -62,6 +64,7 @@ impl JaffScene {
         let objects = serde_json::from_str::<Vec<JaffObject>>(json_str)?;
         Ok(JaffScene {
             title: None,
+            layout: None,
             objects,
         })
     }
