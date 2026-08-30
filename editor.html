@@ -779,7 +779,10 @@
                 let uForm = "";
                 let vForm = "";
 
-                if (obj.shape === 'circle') {
+                if (obj.shape === 'stationary') {
+                    uForm = "0.0";
+                    vForm = "0.0";
+                } else if (obj.shape === 'circle') {
                     uForm = `${scale} * cos(2 * pi * t * ${freq})`;
                     vForm = `${scale} * sin(2 * pi * t * ${freq})`;
                 } else if (obj.shape === 'figure8') {
