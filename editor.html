@@ -41,7 +41,7 @@
         }
     </style>
 </head>
-<body class="h-full flex flex-col font-sans overflow-hidden">
+<body class="h-full flex flex-col font-sans overflow-hidden bg-zinc-950">
 
     <!-- Top Navigation Header -->
     <header class="flex-shrink-0 bg-zinc-900 border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
@@ -62,14 +62,14 @@
     </header>
 
     <!-- Main Workspace Split Screen -->
-    <main class="flex-1 flex overflow-hidden min-h-0">
+    <main class="flex-1 flex min-h-0 overflow-hidden">
         
         <!-- Left Side: Three.js 3D Viewport -->
         <section class="w-7/12 h-full relative bg-black flex flex-col min-w-0">
             <div id="canvas-container" class="flex-1 w-full h-full min-h-0"></div>
             
             <!-- Floating Viewport Controls Over 3D Canvas -->
-            <div class="absolute top-4 left-4 bg-zinc-950/80 backdrop-blur-md border border-zinc-800 p-3 rounded-lg text-xs flex flex-col space-y-2 pointer-events-none shadow-xl">
+            <div class="absolute top-4 left-4 bg-zinc-950/85 backdrop-blur-md border border-zinc-800 p-3 rounded-lg text-xs flex flex-col space-y-2 pointer-events-none shadow-xl">
                 <div class="flex items-center space-x-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-pink-500 animate-ping"></span>
                     <span class="font-bold text-zinc-200 uppercase font-mono tracking-wider">Viewport View</span>
@@ -118,19 +118,41 @@
             <!-- Content Area -->
             <div class="p-6 space-y-6 flex-1">
                 
+                <!-- Section: Object Manager (Outliner) -->
+                <div class="space-y-4">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center justify-between">
+                        <span>1. Scene Object List (Outliner)</span>
+                        <span class="text-zinc-500 font-mono text-[10px]">Edit One At A Time</span>
+                    </h2>
+                    
+                    <div class="flex items-center space-x-3">
+                        <select id="select-active-object" class="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm font-semibold text-indigo-400 focus:outline-none focus:border-indigo-500 cursor-pointer">
+                            <!-- Dynamic populated objects -->
+                        </select>
+                        <button id="btn-add-object" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-2.5 rounded-lg flex items-center justify-center transition-colors text-xs font-sans whitespace-nowrap space-x-1">
+                            <span>➕ Add New</span>
+                        </button>
+                        <button id="btn-delete-object" class="bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-red-400 font-bold px-3 py-2.5 rounded-lg flex items-center justify-center transition-colors text-xs font-sans whitespace-nowrap">
+                            <span>🗑️ Delete</span>
+                        </button>
+                    </div>
+                </div>
+
+                <hr class="border-zinc-800">
+
                 <!-- Section: Scene Attributes -->
                 <div class="space-y-4">
                     <h2 class="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center space-x-2">
-                        <span>1. Metadata Configuration</span>
+                        <span>2. Object Configuration</span>
                     </h2>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-1.5">
-                            <label class="text-[11px] font-bold text-zinc-500 uppercase font-mono">Scene Name</label>
-                            <input type="text" id="input-scene-title" value="Math-Choreographed Spatial Demo" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors">
+                            <label class="text-[11px] font-bold text-zinc-500 uppercase font-mono">Object Title</label>
+                            <input type="text" id="input-object-title" value="Spitfire Engine" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors">
                         </div>
                         <div class="space-y-1.5">
-                            <label class="text-[11px] font-bold text-zinc-500 uppercase font-mono">Stem File</label>
-                            <input type="text" id="input-sound-file" value="assets/wwii_spitfire_flyby.wav" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors">
+                            <label class="text-[11px] font-bold text-zinc-500 uppercase font-mono">Audio Stem File</label>
+                            <input type="text" id="input-sound-file" value="assets/real_ww2_flypast.wav" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors">
                         </div>
                     </div>
                 </div>
@@ -140,7 +162,7 @@
                 <!-- Section: Tilted-Plane Layout -->
                 <div class="space-y-4">
                     <h2 class="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center space-x-2">
-                        <span>2. Geometry & Projection</span>
+                        <span>3. Geometry & Rotation</span>
                     </h2>
                     
                     <div class="grid grid-cols-2 gap-4">
@@ -169,15 +191,15 @@
                     <!-- Spatial Anchors -->
                     <div class="grid grid-cols-3 gap-4">
                         <div class="space-y-1.5">
-                            <label class="text-[11px] font-bold text-zinc-500 uppercase font-mono">Start X</label>
+                            <label class="text-[11px] font-bold text-zinc-500 uppercase font-mono">Anchor X</label>
                             <input type="number" id="num-start-x" step="0.1" value="0.0" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500">
                         </div>
                         <div class="space-y-1.5">
-                            <label class="text-[11px] font-bold text-zinc-500 uppercase font-mono">Start Y</label>
+                            <label class="text-[11px] font-bold text-zinc-500 uppercase font-mono">Anchor Y</label>
                             <input type="number" id="num-start-y" step="0.1" value="0.0" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500">
                         </div>
                         <div class="space-y-1.5">
-                            <label class="text-[11px] font-bold text-zinc-500 uppercase font-mono">Start Z (Base Ht)</label>
+                            <label class="text-[11px] font-bold text-zinc-500 uppercase font-mono">Anchor Z (Base Ht)</label>
                             <input type="number" id="num-start-z" step="0.1" value="0.5" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500">
                         </div>
                     </div>
@@ -199,7 +221,7 @@
                                 <span class="font-bold text-zinc-500 uppercase">Shape Scale (Size / Radius)</span>
                                 <span class="text-indigo-400 font-bold"><span id="lbl-scale">0.85</span> units</span>
                             </div>
-                            <input type="range" id="slider-scale" min="0.1" max="1.5" step="0.05" value="0.85" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+                            <input type="range" id="slider-scale" min="0.0" max="1.5" step="0.05" value="0.85" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500">
                         </div>
 
                         <!-- Slider: Speed -->
@@ -208,28 +230,41 @@
                                 <span class="font-bold text-zinc-500 uppercase">Sweep Speed (Frequency)</span>
                                 <span class="text-indigo-400 font-bold"><span id="lbl-speed">0.15</span> Hz</span>
                             </div>
-                            <input type="range" id="slider-speed" min="0.05" max="1.0" step="0.05" value="0.15" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+                            <input type="range" id="slider-speed" min="0.0" max="1.0" step="0.05" value="0.15" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500">
                         </div>
                     </div>
                 </div>
 
                 <hr class="border-zinc-800">
 
-                <!-- Section: Advanced Parameters -->
+                <!-- Section: Advanced Parameters & View Toggle -->
                 <div class="space-y-4">
                     <h2 class="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center space-x-2">
-                        <span>3. Sound & Crossover</span>
+                        <span>4. Sound & Viewport Visibility</span>
                     </h2>
                     
-                    <div class="flex items-center justify-between bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
-                        <div class="flex flex-col space-y-1">
-                            <span class="text-xs font-bold text-zinc-300">Proximity Bass Boost</span>
-                            <span class="text-[10px] text-zinc-500 font-mono">Boosts low frequencies by 6dB near the screen</span>
+                    <div class="grid grid-cols-1 gap-3">
+                        <div class="flex items-center justify-between bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+                            <div class="flex flex-col space-y-1">
+                                <span class="text-xs font-bold text-zinc-300">Proximity Bass Boost</span>
+                                <span class="text-[10px] text-zinc-500 font-mono">Boosts low frequencies by 6dB near the screen</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="chk-bass-boost" value="" class="sr-only peer">
+                                <div class="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600 peer-checked:after:bg-white"></div>
+                            </label>
                         </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="chk-bass-boost" value="" class="sr-only peer">
-                            <div class="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600 peer-checked:after:bg-white"></div>
-                        </label>
+                        
+                        <div class="flex items-center justify-between bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+                            <div class="flex flex-col space-y-1">
+                                <span class="text-xs font-bold text-zinc-300">Show Only Selected Object</span>
+                                <span class="text-[10px] text-zinc-500 font-mono">Hides other object spheres in the 3D viewport</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="chk-show-active-only" value="" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600 peer-checked:after:bg-white"></div>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -239,7 +274,7 @@
                 <div class="space-y-4 pb-12">
                     <div class="flex items-center justify-between">
                         <h2 class="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center space-x-2">
-                            <span>4. JAFF Configuration Export</span>
+                            <span>5. JAFF Configuration Export</span>
                         </h2>
                         <button id="btn-copy" class="text-xs bg-indigo-600 hover:bg-indigo-500 border border-indigo-500 text-white px-3.5 py-2 rounded-lg flex items-center space-x-1.5 transition-all shadow-md font-bold">
                             <span>🚀 Export JAFF</span>
@@ -259,14 +294,44 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
     <script>
-        // --- 1. Global Variable States ---
+        // --- 1. Global Multi-Object Variable States ---
         let scene, camera, renderer, controls;
-        let objectMesh, pathLine, roomLine;
+        let pathLine, roomLine;
         let speakersGroup = new THREE.Group();
+        let objectsGroup = new THREE.Group(); // Houses all moving object meshes
         
         let playhead = 0.0;
         let isPlaying = true;
         let lastTime = performance.now();
+        
+        // Multi-Object state list
+        let sceneObjects = [
+            {
+                id: "obj-1",
+                title: "Spitfire Engine",
+                soundFile: "assets/real_ww2_flypast.wav",
+                shape: "line",
+                plane: "vertical-yz",
+                angle: 45,
+                scale: 1.2,
+                speed: 0.1,
+                startX: -1.2, startY: 1.2, startZ: 0.0,
+                bassBoost: false
+            },
+            {
+                id: "obj-2",
+                title: "M1 Garand Gunshot",
+                soundFile: "assets/real_m1_garand.wav",
+                shape: "line",
+                plane: "horizontal",
+                angle: 0,
+                scale: 0.0, // stationary point
+                speed: 0.0,
+                startX: 0.0, startY: -1.0, startZ: 0.0,
+                bassBoost: true
+            }
+        ];
+        let activeObjectId = "obj-1";
         
         // UI Nodes
         const canvasContainer = document.getElementById('canvas-container');
@@ -275,6 +340,12 @@
         const iconPause = document.getElementById('icon-pause');
         const sliderTimeline = document.getElementById('slider-timeline');
         const lblPlayhead = document.getElementById('lbl-playhead');
+        
+        // Multi-Object outliner inputs
+        const selectActiveObject = document.getElementById('select-active-object');
+        const btnAddObject = document.getElementById('btn-add-object');
+        const btnDeleteObject = document.getElementById('btn-delete-object');
+        const inputObjectTitle = document.getElementById('input-object-title');
         
         // Control inputs
         const selectShape = document.getElementById('select-shape');
@@ -290,6 +361,7 @@
         const numStartY = document.getElementById('num-start-y');
         const numStartZ = document.getElementById('num-start-z');
         const chkBassBoost = document.getElementById('chk-bass-boost');
+        const chkShowActiveOnly = document.getElementById('chk-show-active-only');
         
         const inputSceneTitle = document.getElementById('input-scene-title');
         const inputSoundFile = document.getElementById('input-sound-file');
@@ -353,7 +425,6 @@
             const roomGeo = new THREE.BoxGeometry(2.0, 2.0, 1.0);
             const roomEdges = new THREE.EdgesGeometry(roomGeo);
             roomLine = new THREE.LineSegments(roomEdges, new THREE.LineBasicMaterial({ color: 0x27272a, linewidth: 1 }));
-            // Center box is X: [-1, 1], Y: [-1, 1], Z: [0, 1]
             roomLine.position.set(0, 0, 0.5);
             scene.add(roomLine);
 
@@ -370,21 +441,10 @@
             listenerMesh.position.set(0, 0, 0.3); // sitting at center
             scene.add(listenerMesh);
 
-            // Setup Speakers
+            // Setup Groups
             scene.add(speakersGroup);
+            scene.add(objectsGroup);
             buildSpeakers();
-
-            // Setup Sound Object Sphere
-            const objGeo = new THREE.SphereGeometry(0.08, 32, 32);
-            const objMat = new THREE.MeshStandardMaterial({ 
-                color: 0xec4899, 
-                emissive: 0xec4899,
-                emissiveIntensity: 1.2,
-                roughness: 0.0,
-                metalness: 1.0
-            });
-            objectMesh = new THREE.Mesh(objGeo, objMat);
-            scene.add(objectMesh);
 
             // Path Line Geometry initialization
             const pathMat = new THREE.LineBasicMaterial({ color: 0xec4899, linewidth: 2, transparent: true, opacity: 0.85 });
@@ -392,22 +452,23 @@
             pathLine = new THREE.Line(dummyGeo, pathMat);
             scene.add(pathLine);
 
+            // Build Initial objects
+            rebuildObjectMeshes();
+
             // Resize Callback
             window.addEventListener('resize', onWindowResize);
         }
 
         // --- 3. Build Speakers ---
         function buildSpeakers() {
-            // Clean previous
             while(speakersGroup.children.length > 0) { 
                 speakersGroup.remove(speakersGroup.children[0]); 
             }
 
             speakerPositions.forEach(sp => {
                 const isHeight = sp.pos[2] > 0.1;
-                const spColor = isHeight ? 0x10b981 : 0x06b6d4; // Emerald for Heights, Cyan for Bed
+                const spColor = isHeight ? 0x10b981 : 0x06b6d4;
 
-                // Speaker Box
                 const spGeo = new THREE.BoxGeometry(0.07, 0.07, 0.09);
                 const spMat = new THREE.MeshStandardMaterial({ 
                     color: spColor,
@@ -416,11 +477,8 @@
                 });
                 const mesh = new THREE.Mesh(spGeo, spMat);
                 mesh.position.set(sp.pos[0], sp.pos[1], sp.pos[2]);
-                
-                // Direct speakers toward listener
                 mesh.lookAt(0, 0, 0.3);
 
-                // Add wireframe highlight glow
                 const edgeGeo = new THREE.EdgesGeometry(spGeo);
                 const edgeLine = new THREE.LineSegments(edgeGeo, new THREE.LineBasicMaterial({ color: spColor, transparent: true, opacity: 0.5 }));
                 mesh.add(edgeLine);
@@ -435,66 +493,74 @@
             renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
         }
 
-        // --- 4. Tilted Plane Trajectory Math & Visualization ---
-        function calculate3DCoordinates(timeVal) {
-            const shape = selectShape.value;
-            const plane = selectPlane.value;
-            const angleDeg = parseFloat(sliderAngle.value);
-            const theta = angleDeg * Math.PI / 180.0; // Radians
-            
-            const scale = parseFloat(sliderScale.value);
-            const freq = parseFloat(sliderSpeed.value);
-            
-            const sX = parseFloat(numStartX.value);
-            const sY = parseFloat(numStartY.value);
-            const sZ = parseFloat(numStartZ.value);
+        // Recreate Three.js moving meshes based on sceneObjects list
+        function rebuildObjectMeshes() {
+            while(objectsGroup.children.length > 0) {
+                objectsGroup.remove(objectsGroup.children[0]);
+            }
 
-            // A. Compute Flat 2D local space coordinates (u, v) based on selected Preset
+            sceneObjects.forEach(obj => {
+                const isActive = (obj.id === activeObjectId);
+                const objGeo = new THREE.SphereGeometry(isActive ? 0.09 : 0.065, 32, 32);
+                
+                // Active is neon pink, Inactive is semi-transparent grey
+                const objMat = new THREE.MeshStandardMaterial({
+                    color: isActive ? 0xec4899 : 0x4b5563,
+                    emissive: isActive ? 0xec4899 : 0x374151,
+                    emissiveIntensity: isActive ? 1.4 : 0.2,
+                    transparent: true,
+                    opacity: isActive ? 1.0 : 0.35,
+                    roughness: 0.1,
+                    metalness: 0.9
+                });
+                const mesh = new THREE.Mesh(objGeo, objMat);
+                mesh.userData = { id: obj.id }; // link ID for click/reference
+                objectsGroup.add(mesh);
+            });
+        }
+
+        // --- 4. Tilted Plane Trajectory Math & Visualization ---
+        function calculate3DCoordinates(obj, timeVal) {
+            const theta = obj.angle * Math.PI / 180.0; // Radians
+
             let u = 0.0;
             let v = 0.0;
 
-            if (shape === 'circle') {
-                u = scale * Math.cos(2.0 * Math.PI * timeVal * freq);
-                v = scale * Math.sin(2.0 * Math.PI * timeVal * freq);
-            } else if (shape === 'figure8') {
-                u = scale * Math.sin(2.0 * Math.PI * timeVal * freq);
-                v = scale * Math.sin(4.0 * Math.PI * timeVal * freq) * 0.5;
-            } else if (shape === 'line') {
-                // Sweep linearly back and forth from -scale to +scale over 5 seconds
+            if (obj.shape === 'circle') {
+                u = obj.scale * Math.cos(2.0 * Math.PI * timeVal * obj.speed);
+                v = obj.scale * Math.sin(2.0 * Math.PI * timeVal * obj.speed);
+            } else if (obj.shape === 'figure8') {
+                u = obj.scale * Math.sin(2.0 * Math.PI * timeVal * obj.speed);
+                v = obj.scale * Math.sin(4.0 * Math.PI * timeVal * obj.speed) * 0.5;
+            } else if (obj.shape === 'line') {
                 const sweepCycle = timeVal % 5.0;
                 const factor = (sweepCycle < 2.5) ? (sweepCycle / 2.5) : (1.0 - (sweepCycle - 2.5) / 2.5);
-                u = -scale + (2.0 * scale) * factor;
+                u = -obj.scale + (2.0 * obj.scale) * factor;
                 v = 0.0;
-            } else if (shape === 'spiral') {
-                // Centripetal inward/outward spiral
-                const spiralRadius = scale * (1.0 - (timeVal % 10.0) / 12.0);
-                u = spiralRadius * Math.cos(2.0 * Math.PI * timeVal * freq);
-                v = spiralRadius * Math.sin(2.0 * Math.PI * timeVal * freq);
+            } else if (obj.shape === 'spiral') {
+                const spiralRadius = obj.scale * (1.0 - (timeVal % 10.0) / 12.0);
+                u = spiralRadius * Math.cos(2.0 * Math.PI * timeVal * obj.speed);
+                v = spiralRadius * Math.sin(2.0 * Math.PI * timeVal * obj.speed);
             }
 
-            // B. Project flat (u, v) into global 3D space (x, y, z) based on chosen base plane and tilt angle
-            let x = sX;
-            let y = sY;
-            let z = sZ;
+            let x = obj.startX;
+            let y = obj.startY;
+            let z = obj.startZ;
 
-            if (plane === 'horizontal') {
-                // Base XY plane tilted around the X-axis (Pitch)
+            if (obj.plane === 'horizontal') {
                 x += u;
                 y += v * Math.cos(theta);
                 z += v * Math.sin(theta);
-            } else if (plane === 'vertical-yz') {
-                // Base YZ plane pivoted around the Z-axis (Yaw)
+            } else if (obj.plane === 'vertical-yz') {
                 x += u * Math.sin(theta);
                 y += u * Math.cos(theta);
                 z += v;
-            } else if (plane === 'vertical-xz') {
-                // Base XZ plane tilted around the Y-axis (Roll)
+            } else if (obj.plane === 'vertical-xz') {
                 x += u * Math.cos(theta);
                 y += v;
                 z += u * Math.sin(theta);
             }
 
-            // Enforce hard-culling limits for visual representation
             x = Math.max(-1.5, Math.min(1.5, x));
             y = Math.max(-1.5, Math.min(1.5, y));
             z = Math.max(-0.2, Math.min(1.5, z));
@@ -502,12 +568,14 @@
             return { x, y, z };
         }
 
-        // Redraw path trajectory line
+        // Redraw only the active panned path trajectory line
         function updatePathLine() {
+            const activeObj = sceneObjects.find(o => o.id === activeObjectId);
+            if (!activeObj) return;
+
             const points = [];
-            // Samples path across 10 seconds (100 divisions)
             for (let t = 0; t <= 10.0; t += 0.1) {
-                const pos = calculate3DCoordinates(t);
+                const pos = calculate3DCoordinates(activeObj, t);
                 points.push(new THREE.Vector3(pos.x, pos.y, pos.z));
             }
             
@@ -516,98 +584,147 @@
             pathLine.geometry = lineGeo;
         }
 
-        // Update real-time JAFF text representation
-        function updateJaffOutput() {
-            const shape = selectShape.value;
-            const plane = selectPlane.value;
-            const angleDeg = parseFloat(sliderAngle.value);
-            const theta = angleDeg * Math.PI / 180.0;
-            
-            const scale = parseFloat(sliderScale.value).toFixed(2);
-            const freq = parseFloat(sliderSpeed.value).toFixed(2);
-            
-            const sX = parseFloat(numStartX.value).toFixed(1);
-            const sY = parseFloat(numStartY.value).toFixed(1);
-            const sZ = parseFloat(numStartZ.value).toFixed(1);
-            
-            const isBassBoost = chkBassBoost.checked;
-            
-            const cosVal = Math.cos(theta).toFixed(3);
-            const sinVal = Math.sin(theta).toFixed(3);
+        // Build active object list dropdown in HTML
+        function syncOutlinerDropdown() {
+            selectActiveObject.innerHTML = "";
+            sceneObjects.forEach(obj => {
+                const opt = document.createElement('option');
+                opt.value = obj.id;
+                opt.textContent = obj.title;
+                if (obj.id === activeObjectId) {
+                    opt.selected = true;
+                }
+                selectActiveObject.appendChild(opt);
+            });
+        }
 
-            // Construct mathematical string formulas based on selected options
-            let xForm = "0.0";
-            let yForm = "0.0";
-            let zForm = "0.0";
+        // Load active object state parameters into sliders & textboxes
+        function loadActiveObjectToControls() {
+            const obj = sceneObjects.find(o => o.id === activeObjectId);
+            if (!obj) return;
 
-            // Local spatial representations based on shape
-            let uForm = "";
-            let vForm = "";
+            inputObjectTitle.value = obj.title;
+            inputSoundFile.value = obj.soundFile;
+            
+            selectShape.value = obj.shape;
+            selectPlane.value = obj.plane;
+            
+            numStartX.value = obj.startX;
+            numStartY.value = obj.startY;
+            numStartZ.value = obj.startZ;
+            
+            sliderAngle.value = obj.angle;
+            lblAngle.textContent = obj.angle;
+            
+            sliderScale.value = obj.scale;
+            lblScale.textContent = obj.scale.toFixed(2);
+            
+            sliderSpeed.value = obj.speed;
+            lblSpeed.textContent = obj.speed.toFixed(2);
+            
+            chkBassBoost.checked = obj.bassBoost;
+        }
 
-            if (shape === 'circle') {
-                uForm = `${scale} * cos(2 * pi * t * ${freq})`;
-                vForm = `${scale} * sin(2 * pi * t * ${freq})`;
-            } else if (shape === 'figure8') {
-                uForm = `${scale} * sin(2 * pi * t * ${freq})`;
-                vForm = `0.5 * ${scale} * sin(4 * pi * t * ${freq})`;
-            } else if (shape === 'line') {
-                // Simulates linear sweep formula
-                uForm = `-scale + ${scale} * (t % 5.0) / 2.5`; 
-                vForm = "0.0";
-            } else if (shape === 'spiral') {
-                uForm = `${scale} * (1.0 - (t % 10.0) / 12.0) * cos(2 * pi * t * ${freq})`;
-                vForm = `${scale} * (1.0 - (t % 10.0) / 12.0) * sin(2 * pi * t * ${freq})`;
-            }
+        // Save form slider parameters back to the active object inside state list
+        function saveControlsToActiveObject() {
+            const obj = sceneObjects.find(o => o.id === activeObjectId);
+            if (!obj) return;
 
-            // Project flat coordinates to 3D formulas
-            if (plane === 'horizontal') {
-                xForm = `${uForm}`;
-                yForm = `(${vForm}) * ${cosVal}`;
-                zForm = `(${vForm}) * ${sinVal}`;
-            } else if (plane === 'vertical-yz') {
-                xForm = `(${uForm}) * ${sinVal}`;
-                yForm = `(${uForm}) * ${cosVal}`;
-                zForm = `${vForm}`;
-            } else if (plane === 'vertical-xz') {
-                xForm = `(${uForm}) * ${cosVal}`;
-                yForm = `${vForm}`;
-                zForm = `(${uForm}) * ${sinVal}`;
-            }
+            obj.title = inputObjectTitle.value;
+            obj.soundFile = inputSoundFile.value;
+            obj.shape = selectShape.value;
+            obj.plane = selectPlane.value;
+            obj.startX = parseFloat(numStartX.value) || 0.0;
+            obj.startY = parseFloat(numStartY.value) || 0.0;
+            obj.startZ = parseFloat(numStartZ.value) || 0.0;
+            obj.angle = parseFloat(sliderAngle.value);
+            obj.scale = parseFloat(sliderScale.value);
+            obj.speed = parseFloat(sliderSpeed.value);
+            obj.bassBoost = chkBassBoost.checked;
+
+            // Sync outliner name
+            syncOutlinerDropdown();
+        }
+
+        // Compile and format the entire multi-object scene state into JAFF JSON
+        function generateJaffOutput() {
+            const objectsList = sceneObjects.map(obj => {
+                const theta = obj.angle * Math.PI / 180.0;
+                const cosVal = Math.cos(theta).toFixed(3);
+                const sinVal = Math.sin(theta).toFixed(3);
+                
+                const scale = obj.scale.toFixed(2);
+                const freq = obj.speed.toFixed(2);
+
+                let uForm = "";
+                let vForm = "";
+
+                if (obj.shape === 'circle') {
+                    uForm = `${scale} * cos(2 * pi * t * ${freq})`;
+                    vForm = `${scale} * sin(2 * pi * t * ${freq})`;
+                } else if (obj.shape === 'figure8') {
+                    uForm = `${scale} * sin(2 * pi * t * ${freq})`;
+                    vForm = `0.5 * ${scale} * sin(4 * pi * t * ${freq})`;
+                } else if (obj.shape === 'line') {
+                    uForm = `-scale + ${scale} * (t % 5.0) / 2.5`; 
+                    vForm = "0.0";
+                } else if (obj.shape === 'spiral') {
+                    uForm = `${scale} * (1.0 - (t % 10.0) / 12.0) * cos(2 * pi * t * ${freq})`;
+                    vForm = `${scale} * (1.0 - (t % 10.0) / 12.0) * sin(2 * pi * t * ${freq})`;
+                }
+
+                let xForm = "0.0";
+                let yForm = "0.0";
+                let zForm = "0.0";
+
+                if (obj.plane === 'horizontal') {
+                    xForm = `${uForm}`;
+                    yForm = `(${vForm}) * ${cosVal}`;
+                    zForm = `(${vForm}) * ${sinVal}`;
+                } else if (obj.plane === 'vertical-yz') {
+                    xForm = `(${uForm}) * ${sinVal}`;
+                    yForm = `(${uForm}) * ${cosVal}`;
+                    zForm = `${vForm}`;
+                } else if (obj.plane === 'vertical-xz') {
+                    xForm = `(${uForm}) * ${cosVal}`;
+                    yForm = `${vForm}`;
+                    zForm = `(${uForm}) * ${sinVal}`;
+                }
+
+                return {
+                    metadata: {
+                        title: obj.title,
+                        source_sound_file: obj.soundFile
+                    },
+                    temporal: {
+                        start_offset: 0.0,
+                        end_offset: 10.0,
+                        loop: true
+                    },
+                    spatial: {
+                        startX: parseFloat(obj.startX),
+                        startY: parseFloat(obj.startY),
+                        startZ: parseFloat(obj.startZ),
+                        xformula: xForm,
+                        yformula: yForm,
+                        zformula: zForm,
+                        volume: "1.0",
+                        proximity_bass_boost: obj.bassBoost
+                    }
+                };
+            });
 
             const jaffJson = {
                 title: inputSceneTitle.value,
-                objects: [
-                    {
-                        metadata: {
-                            title: "Interactive Tilted-Plane Object",
-                            source_sound_file: inputSoundFile.value
-                        },
-                        temporal: {
-                            start_offset: 0.0,
-                            end_offset: 10.0,
-                            loop: true
-                        },
-                        spatial: {
-                            startX: parseFloat(sX),
-                            startY: parseFloat(sY),
-                            startZ: parseFloat(sZ),
-                            xformula: xForm,
-                            yformula: yForm,
-                            zformula: zForm,
-                            volume: "1.0",
-                            proximity_bass_boost: isBassBoost
-                        }
-                    }
-                ]
+                objects: objectsList
             };
 
-            // Format nicely
             codeJaff.textContent = JSON.stringify(jaffJson, null, 2);
         }
 
         // --- 5. Event Listeners ---
         function setupEventListeners() {
-            // Play/Pause Playback Toggle
+            // Play/Pause
             btnPlay.addEventListener('click', () => {
                 isPlaying = !isPlaying;
                 if (isPlaying) {
@@ -620,43 +737,99 @@
                 }
             });
 
-            // Timeline slider changes
+            // Timeline playhead slider
             sliderTimeline.addEventListener('input', (e) => {
                 playhead = parseFloat(e.target.value);
                 lblPlayhead.textContent = playhead.toFixed(2);
-                updateObjectPosition();
+                updateAllObjectPositions();
             });
 
-            // Geometry Slider Changes
+            // Geometry Form Slider Inputs (Sync instantly to active object)
             sliderAngle.addEventListener('input', (e) => {
                 lblAngle.textContent = e.target.value;
+                saveControlsToActiveObject();
                 updatePathLine();
             });
 
             sliderScale.addEventListener('input', (e) => {
                 lblScale.textContent = parseFloat(e.target.value).toFixed(2);
+                saveControlsToActiveObject();
                 updatePathLine();
             });
 
             sliderSpeed.addEventListener('input', (e) => {
                 lblSpeed.textContent = parseFloat(e.target.value).toFixed(2);
+                saveControlsToActiveObject();
                 updatePathLine();
             });
 
-            // Options changes
-            selectShape.addEventListener('change', () => { updatePathLine(); });
-            selectPlane.addEventListener('change', () => { updatePathLine(); });
+            // Field text updates
+            inputObjectTitle.addEventListener('input', () => { saveControlsToActiveObject(); });
+            inputSoundFile.addEventListener('input', () => { saveControlsToActiveObject(); });
+            selectShape.addEventListener('change', () => { saveControlsToActiveObject(); updatePathLine(); });
+            selectPlane.addEventListener('change', () => { saveControlsToActiveObject(); updatePathLine(); });
             
-            numStartX.addEventListener('input', () => { updatePathLine(); });
-            numStartY.addEventListener('input', () => { updatePathLine(); });
-            numStartZ.addEventListener('input', () => { updatePathLine(); });
+            numStartX.addEventListener('input', () => { saveControlsToActiveObject(); updatePathLine(); });
+            numStartY.addEventListener('input', () => { saveControlsToActiveObject(); updatePathLine(); });
+            numStartZ.addEventListener('input', () => { saveControlsToActiveObject(); updatePathLine(); });
+            chkBassBoost.addEventListener('change', () => { saveControlsToActiveObject(); });
 
-            // Export JAFF and Copy to clipboard on manual button click
-            btnCopy.addEventListener('click', () => {
-                // First, generate the JSON into the code block on click!
-                updateJaffOutput();
+            // Redraw viewport filter changes
+            chkShowActiveOnly.addEventListener('change', () => { updateAllObjectPositions(); });
+
+            // Active Object Switch Outliner Event
+            selectActiveObject.addEventListener('change', (e) => {
+                activeObjectId = e.target.value;
+                loadActiveObjectToControls();
+                rebuildObjectMeshes();
+                updatePathLine();
+                updateAllObjectPositions();
+            });
+
+            // Add Object Button
+            btnAddObject.addEventListener('click', () => {
+                const newId = `obj-${Date.now()}`;
+                const newTitle = `Object ${sceneObjects.length + 1}`;
+                sceneObjects.push({
+                    id: newId,
+                    title: newTitle,
+                    soundFile: "assets/real_ww2_flypast.wav",
+                    shape: "circle",
+                    plane: "horizontal",
+                    angle: 0,
+                    scale: 0.8,
+                    speed: 0.15,
+                    startX: 0.0, startY: 0.0, startZ: 0.5,
+                    bassBoost: false
+                });
                 
-                // Then, copy that generated content immediately
+                activeObjectId = newId;
+                syncOutlinerDropdown();
+                loadActiveObjectToControls();
+                rebuildObjectMeshes();
+                updatePathLine();
+                updateAllObjectPositions();
+            });
+
+            // Delete Object Button
+            btnDeleteObject.addEventListener('click', () => {
+                if (sceneObjects.length <= 1) {
+                    alert("Your scene must contain at least one audio object.");
+                    return;
+                }
+                sceneObjects = sceneObjects.filter(o => o.id !== activeObjectId);
+                activeObjectId = sceneObjects[0].id;
+                
+                syncOutlinerDropdown();
+                loadActiveObjectToControls();
+                rebuildObjectMeshes();
+                updatePathLine();
+                updateAllObjectPositions();
+            });
+
+            // Copy/Export Button
+            btnCopy.addEventListener('click', () => {
+                generateJaffOutput();
                 navigator.clipboard.writeText(codeJaff.textContent)
                     .then(() => {
                         const originalText = btnCopy.innerHTML;
@@ -673,15 +846,30 @@
         }
 
         // --- 6. Frame Loops ---
-        function updateObjectPosition() {
-            const pos = calculate3DCoordinates(playhead);
-            objectMesh.position.set(pos.x, pos.y, pos.z);
+        function updateAllObjectPositions() {
+            const showActiveOnly = chkShowActiveOnly.checked;
+
+            objectsGroup.children.forEach(mesh => {
+                const id = mesh.userData.id;
+                const obj = sceneObjects.find(o => o.id === id);
+                if (!obj) return;
+
+                // Animate sphere path movement
+                const pos = calculate3DCoordinates(obj, playhead);
+                mesh.position.set(pos.x, pos.y, pos.z);
+
+                // Apply dynamic visibility filter
+                if (showActiveOnly) {
+                    mesh.visible = (id === activeObjectId);
+                } else {
+                    mesh.visible = true;
+                }
+            });
         }
 
         function animate() {
             requestAnimationFrame(animate);
 
-            // 1. Calculate delta time and advance playhead
             if (isPlaying) {
                 const now = performance.now();
                 const delta = (now - lastTime) / 1000.0;
@@ -692,24 +880,21 @@
                     playhead = 0.0; // Loop timeline
                 }
                 
-                // Update Timeline Slider UI
                 sliderTimeline.value = playhead;
                 lblPlayhead.textContent = playhead.toFixed(2);
             }
 
-            // 2. Refresh moving sphere position
-            updateObjectPosition();
-
-            // 3. Update Orbit Camera controls
+            updateAllObjectPositions();
             controls.update();
-
-            // 4. Render Scene
             renderer.render(scene, camera);
         }
 
         // --- Start Application ---
         init3D();
+        syncOutlinerDropdown();
+        loadActiveObjectToControls();
         updatePathLine();
+        updateAllObjectPositions();
         setupEventListeners();
         animate();
 
