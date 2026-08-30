@@ -490,9 +490,9 @@
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x020204);
 
-            // Camera (Symmetrical perspective looking from behind the listener toward the TV)
+            // Camera (Symmetrical 3rd-person perspective looking down at the 0,0,0 origin from a 45-degree elevation angle)
             camera = new THREE.PerspectiveCamera(50, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 100);
-            camera.position.set(0.0, -2.8, 0.65);
+            camera.position.set(0.0, -2.2, 2.2);
 
             // Renderer
             renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -504,7 +504,7 @@
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
             controls.dampingFactor = 0.05;
-            controls.target.set(0.0, 0.0, 0.4);
+            controls.target.set(0.0, 0.0, 0.0);
 
             // Ambient & Point Lighting
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.35);
