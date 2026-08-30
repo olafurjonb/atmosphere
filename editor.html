@@ -204,6 +204,7 @@
                         <div class="space-y-1.5">
                             <label class="text-[11px] font-bold text-zinc-500 uppercase font-mono">2D Orbit Shape</label>
                             <select id="select-shape" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer">
+                                <option value="stationary">Fixed Point (Stationary)</option>
                                 <option value="circle">Perfect Circle (Orbit)</option>
                                 <option value="figure8">Figure-Eight (Infinity)</option>
                                 <option value="line">Linear Flyby (Sweep)</option>
@@ -394,7 +395,7 @@
                 id: "obj-2",
                 title: "M1 Garand Gunshot",
                 soundFile: "real_m1_garand.wav",
-                shape: "line",
+                shape: "stationary",
                 plane: "horizontal",
                 angle: 0,
                 scale: 0.0, // stationary point
@@ -622,7 +623,10 @@
             let u = 0.0;
             let v = 0.0;
 
-            if (obj.shape === 'circle') {
+            if (obj.shape === 'stationary') {
+                u = 0.0;
+                v = 0.0;
+            } else if (obj.shape === 'circle') {
                 u = obj.scale * Math.cos(2.0 * Math.PI * timeVal * obj.speed);
                 v = obj.scale * Math.sin(2.0 * Math.PI * timeVal * obj.speed);
             } else if (obj.shape === 'figure8') {
