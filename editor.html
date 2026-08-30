@@ -266,6 +266,15 @@
                             </div>
                             <input type="range" id="slider-speed" min="0.0" max="1.0" step="0.05" value="0.15" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500">
                         </div>
+
+                        <!-- Slider: Volume / Gain -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between text-[11px] font-mono">
+                                <span class="font-bold text-zinc-500 uppercase">Object Gain (Volume)</span>
+                                <span class="font-bold"><span id="lbl-volume" class="text-indigo-400">1.0</span><span id="lbl-overdrive" class="text-amber-500 hidden font-sans ml-1 text-[9px] bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded-full uppercase tracking-wider font-extrabold">Overdrive</span></span>
+                            </div>
+                            <input type="range" id="slider-volume" min="0.0" max="3.0" step="0.1" value="1.0" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+                        </div>
                     </div>
                 </div>
 
@@ -378,6 +387,7 @@
                 startOffset: 0.0,
                 endOffset: 10.0,
                 loop: true,
+                volume: 1.0,
                 bassBoost: false
             },
             {
@@ -393,6 +403,7 @@
                 startOffset: 5.0,
                 endOffset: 8.0,
                 loop: false,
+                volume: 2.5,
                 bassBoost: true
             }
         ];
@@ -421,6 +432,11 @@
         const lblScale = document.getElementById('lbl-scale');
         const sliderSpeed = document.getElementById('slider-speed');
         const lblSpeed = document.getElementById('lbl-speed');
+        
+        // Volume/Gain controls
+        const sliderVolume = document.getElementById('slider-volume');
+        const lblVolume = document.getElementById('lbl-volume');
+        const lblOverdrive = document.getElementById('lbl-overdrive');
         
         const numStartX = document.getElementById('num-start-x');
         const numStartY = document.getElementById('num-start-y');
@@ -700,6 +716,16 @@
             
             sliderSpeed.value = obj.speed;
             lblSpeed.textContent = obj.speed.toFixed(2);
+
+            // Load Volume / Gain & Toggle Overdrive Warning Badge
+            const vol = obj.volume !== undefined ? obj.volume : 1.0;
+            sliderVolume.value = vol;
+            lblVolume.textContent = vol.toFixed(1);
+            if (vol > 1.0) {
+                lblOverdrive.classList.remove('hidden');
+            } else {
+                lblOverdrive.classList.add('hidden');
+            }
             
             chkBassBoost.checked = obj.bassBoost;
 
@@ -724,6 +750,7 @@
             obj.angle = parseFloat(sliderAngle.value);
             obj.scale = parseFloat(sliderScale.value);
             obj.speed = parseFloat(sliderSpeed.value);
+            obj.volume = parseFloat(sliderVolume.value) || 1.0;
             obj.bassBoost = chkBassBoost.checked;
 
             // Save Temporal Fields
@@ -798,7 +825,7 @@
                         xformula: xForm,
                         yformula: yForm,
                         zformula: zForm,
-                        volume: "1.0",
+                        volume: (obj.volume !== undefined ? obj.volume : 1.0).toFixed(1),
                         proximity_bass_boost: obj.bassBoost
                     }
                 };
@@ -853,6 +880,17 @@
                 updatePathLine();
             });
 
+            sliderVolume.addEventListener('input', (e) => {
+                const vol = parseFloat(e.target.value);
+                lblVolume.textContent = vol.toFixed(1);
+                if (vol > 1.0) {
+                    lblOverdrive.classList.remove('hidden');
+                } else {
+                    lblOverdrive.classList.add('hidden');
+                }
+                saveControlsToActiveObject();
+            });
+
             // Field text updates
             inputObjectTitle.addEventListener('input', () => { saveControlsToActiveObject(); });
             selectSoundFile.addEventListener('change', () => { saveControlsToActiveObject(); });
@@ -898,6 +936,7 @@
                     startOffset: 0.0,
                     endOffset: 10.0,
                     loop: true,
+                    volume: 1.0,
                     bassBoost: false
                 });
                 
