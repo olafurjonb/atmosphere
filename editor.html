@@ -613,9 +613,8 @@
                 u = obj.scale * Math.sin(2.0 * Math.PI * timeVal * obj.speed);
                 v = obj.scale * Math.sin(4.0 * Math.PI * timeVal * obj.speed) * 0.5;
             } else if (obj.shape === 'line') {
-                const sweepCycle = timeVal % 5.0;
-                const factor = (sweepCycle < 2.5) ? (sweepCycle / 2.5) : (1.0 - (sweepCycle - 2.5) / 2.5);
-                u = -obj.scale + (2.0 * obj.scale) * factor;
+                // Smooth back-and-forth cosine linear sweep
+                u = -obj.scale * Math.cos(2.0 * Math.PI * timeVal * obj.speed);
                 v = 0.0;
             } else if (obj.shape === 'spiral') {
                 const spiralRadius = obj.scale * (1.0 - (timeVal % 10.0) / 12.0);
@@ -756,7 +755,8 @@
                     uForm = `${scale} * sin(2 * pi * t * ${freq})`;
                     vForm = `0.5 * ${scale} * sin(4 * pi * t * ${freq})`;
                 } else if (obj.shape === 'line') {
-                    uForm = `-scale + ${scale} * (t % 5.0) / 2.5`; 
+                    // Smooth back-and-forth cosine linear sweep formula
+                    uForm = `-${scale} * cos(2 * pi * t * ${freq})`; 
                     vForm = "0.0";
                 } else if (obj.shape === 'spiral') {
                     uForm = `${scale} * (1.0 - (t % 10.0) / 12.0) * cos(2 * pi * t * ${freq})`;
