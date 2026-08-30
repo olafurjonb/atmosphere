@@ -51,7 +51,7 @@ async def render_scene(payload: dict):
         output_wav_name = f"spatial_{tx_id}.wav"
         preview_wav_name = f"preview_{tx_id}.wav"
 
-        jaff_path = os.path.join(RENDERS_DIR, jaff_filename)
+        jaff_path = os.path.join(os.path.dirname(__file__), jaff_filename)
         output_wav_path = os.path.join(RENDERS_DIR, output_wav_name)
         preview_wav_path = os.path.join(RENDERS_DIR, preview_wav_name)
 
