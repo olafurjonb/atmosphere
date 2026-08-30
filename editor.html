@@ -801,18 +801,20 @@
                 let yForm = "0.0";
                 let zForm = "0.0";
 
-                if (obj.plane === 'horizontal') {
-                    xForm = `${uForm}`;
-                    yForm = `(${vForm}) * ${cosVal}`;
-                    zForm = `(${vForm}) * ${sinVal}`;
-                } else if (obj.plane === 'vertical-yz') {
-                    xForm = `(${uForm}) * ${sinVal}`;
-                    yForm = `(${uForm}) * ${cosVal}`;
-                    zForm = `${vForm}`;
-                } else if (obj.plane === 'vertical-xz') {
-                    xForm = `(${uForm}) * ${cosVal}`;
-                    yForm = `${vForm}`;
-                    zForm = `(${uForm}) * ${sinVal}`;
+                if (obj.shape !== 'stationary') {
+                    if (obj.plane === 'horizontal') {
+                        xForm = `${uForm}`;
+                        yForm = `(${vForm}) * ${cosVal}`;
+                        zForm = `(${vForm}) * ${sinVal}`;
+                    } else if (obj.plane === 'vertical-yz') {
+                        xForm = `(${uForm}) * ${sinVal}`;
+                        yForm = `(${uForm}) * ${cosVal}`;
+                        zForm = `${vForm}`;
+                    } else if (obj.plane === 'vertical-xz') {
+                        xForm = `(${uForm}) * ${cosVal}`;
+                        yForm = `${vForm}`;
+                        zForm = `(${uForm}) * ${sinVal}`;
+                    }
                 }
 
                 return {
