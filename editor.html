@@ -944,6 +944,12 @@
 
             // Render & Play REST API Call
             btnRender.addEventListener('click', () => {
+                // Determine origin dynamically to support file:/// protocol accessing local uvicorn server
+                let origin = window.location.origin;
+                if (origin.startsWith("file://") || origin === "null") {
+                    origin = "http://127.0.0.1:8000";
+                }
+
                 // 1. Generate the JAFF payload first
                 generateJaffOutput();
                 const payload = JSON.parse(codeJaff.textContent);
@@ -959,8 +965,8 @@
                 lblRenderStatus.classList.remove('text-emerald-400', 'text-red-500');
                 lblRenderStatus.classList.add('text-amber-500');
 
-                // 3. Dispatch POST request to our FastAPI backend
-                fetch("/render", {
+                // 3. Dispatch POST request to our FastAPI backend (qualified with origin)
+                fetch(origin + "/render", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
@@ -972,10 +978,14 @@
                     return res.json();
                 })
                 .then(data => {
-                    // 4. Update HTML5 player sources & download links
-                    audioPreview.src = data.preview_url;
-                    btnDownloadMaster.href = data.master_url;
-                    btnDownloadPreview.href = data.preview_url;
+                    // Update HTML5 player sources & download links, explicitly forcing the .wav extension!
+                    audioPreview.src = origin + data.preview_url;
+                    
+                    btnDownloadMaster.href = origin + data.master_url;
+                    btnDownloadMaster.setAttribute("download", `atmosphere_7.1.4_master_${data.tx_id}.wav`);
+                    
+                    btnDownloadPreview.href = origin + data.preview_url;
+                    btnDownloadPreview.setAttribute("download", `atmosphere_stereo_preview_${data.tx_id}.wav`);
 
                     // 5. Instantly play the stereo binaural preview!
                     audioPreview.play();
