@@ -3,6 +3,7 @@ import struct
 import math
 import os
 import random
+import subprocess
 
 def write_wav(filename, samples, sample_rate=48000):
     with wave.open(filename, 'wb') as w:
@@ -14,10 +15,50 @@ def write_wav(filename, samples, sample_rate=48000):
             val_i16 = int(val * 32767)
             w.writeframes(struct.pack('<h', val_i16))
 
+# Helper to run FFmpeg conversion
+def convert_mp3_to_wav(mp3_path, wav_path):
+    print(f"Converting {mp3_path} -> {wav_path} (48kHz Mono)...")
+    try:
+        subprocess.run([
+            "ffmpeg", "-y", "-i", mp3_path, 
+            "-ac", "1", "-ar", "48000", wav_path
+        ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print("Success!")
+        return True
+    except Exception as e:
+        print(f"FFmpeg conversion failed for {mp3_path}: {e}")
+        return False
+
 def main():
     os.makedirs("assets", exist_ok=True)
     sr = 48000
     random.seed(42) # Deterministic noise
+
+    # --- PART 1: CONVERT USER'S ROYALTY-FREE MP3 RECORDINGS TO THE EXPECTED WAV FILENAMES ---
+    print("\n--- Processing Royalty-Free Audio Recordings ---")
+    rf_dir = "assets/royality-free"
+    
+    # Mapping of source MP3s to their panner/compiler expected WAV target filenames
+    audio_mappings = {
+        "freesound_community-spitfire-close-1-34153.mp3": "assets/real_spitfire_close.wav",
+        "scottishperson-sound-effect-ww2-fighter-plane-fly-past-333257.mp3": "assets/real_ww2_flypast.wav",
+        "scottishperson-sound-effect-ww2-fighter-plane-takeoff-333260.mp3": "assets/real_ww2_takeoff.wav",
+        "freesound_community-low-airplane-fly-by-90354.mp3": "assets/real_low_flyby.wav",
+        "freesound_community-m1-garand-rifle-80192.mp3": "assets/real_m1_garand.wav"
+    }
+
+    if os.path.exists(rf_dir):
+        for mp3_name, wav_name in audio_mappings.items():
+            mp3_path = os.path.join(rf_dir, mp3_name)
+            if os.path.exists(mp3_path):
+                convert_mp3_to_wav(mp3_path, wav_name)
+            else:
+                print(f"Warning: Source MP3 file not found: {mp3_path}")
+    else:
+        print(f"Warning: Directory '{rf_dir}' does not exist.")
+
+    # --- PART 2: SYNTHESIZE PROCEDURAL MATHEMATICAL WAVEFORMS ---
+    print("\n--- Synthesizing Procedural Mathematical Audio ---")
 
     print("Generating assets/spaceship.wav (Spaceship engine flyby hum)...")
     phase = 0.0
@@ -99,21 +140,16 @@ def main():
     samples = []
     for i in range(int(6.0 * sr)):
         t = i / sr
-        # Low rumble of engine V12
         phase_eng += 2.0 * math.pi * 82.0 / sr
         engine = 0.4 * math.sin(phase_eng) + 0.2 * math.sin(phase_eng * 2.0)
         
-        # Jericho Trumpet siren whistles up as speed/wind increases
-        # Starts at 550Hz and accelerates to 1350Hz
         siren_freq = 550.0 + 800.0 * ((t / 6.0) ** 1.8)
         phase_siren += 2.0 * math.pi * siren_freq / sr
         
-        # Wind chop (the prop nose spinner modulates the siren at 9.5Hz)
         chop = 0.45 + 0.55 * math.sin(2.0 * math.pi * t * 9.5)
         siren = math.sin(phase_siren) * chop * ((t / 6.0) ** 1.2)
         
         val = engine + siren * 0.65
-        # Fade boundaries
         if t < 0.5:
             val *= (t / 0.5)
         elif t > 5.5:
@@ -128,15 +164,12 @@ def main():
     samples = []
     for i in range(int(8.0 * sr)):
         t = i / sr
-        # Detuned multi-frequency Merlin sound
         phase_m1 += 2.0 * math.pi * 92.0 / sr
         phase_m2 += 2.0 * math.pi * 92.8 / sr
         phase_m3 += 2.0 * math.pi * 91.2 / sr
         
-        # Merlin piston roar with high harmonics
         merlin = 0.35 * math.sin(phase_m1) + 0.25 * math.sin(phase_m1 * 2.0) + 0.15 * math.sin(phase_m1 * 3.0)
         merlin += 0.25 * math.sin(phase_m2) + 0.15 * math.sin(phase_m3)
-        # Add cylinder firing combustion crackle and white noise roar
         combustion = random.uniform(-0.15, 0.15) * math.sin(2.0 * math.pi * t * 45.0)
         merlin += combustion + random.uniform(-0.1, 0.1)
         
@@ -153,15 +186,11 @@ def main():
     samples = []
     for i in range(int(3.0 * sr)):
         t = i / sr
-        # Rapid fire bursts, 11 rounds per second (90.9 ms intervals)
         gun_cycle = t % 0.0909
         if gun_cycle < 0.045:
-            # White noise explosion burst
             burst = random.uniform(-1.0, 1.0)
-            # Steep exponential decay representing individual muzzle pressure
             envelope = math.exp(-120.0 * gun_cycle)
             val = burst * envelope
-            # Add mechanical metallic slap using high frequency sine decay
             ping_freq = 1400.0 * math.exp(-250.0 * gun_cycle)
             ping_phase += 2.0 * math.pi * ping_freq / sr
             val += 0.35 * math.sin(ping_phase) * envelope
@@ -176,20 +205,17 @@ def main():
     samples = []
     for i in range(int(4.0 * sr)):
         t = i / sr
-        # Direct white noise blast
         blast = random.uniform(-1.0, 1.0) * math.exp(-18.0 * t)
-        # Deep sub-bass acoustic rumble
         rumble_freq = 42.0 + 8.0 * math.sin(2.0 * math.pi * t * 4.5)
         rumble_phase += 2.0 * math.pi * rumble_freq / sr
         rumble = math.sin(rumble_phase)
         
-        # Combine shockwave blast and sub-bass rumble
         envelope = math.exp(-2.2 * t)
         val = (blast + 0.85 * rumble) * envelope
         samples.append(val * 0.6)
     write_wav("assets/wwii_bomb_explosion.wav", samples, sr)
 
-    print("All procedural assets successfully generated!")
+    print("\nAll assets successfully synchronized and generated!")
 
 if __name__ == "__main__":
     main()
