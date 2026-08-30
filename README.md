@@ -75,6 +75,37 @@ Run the compiler by passing the path to the scene definition file (`.jaff`) and 
 
 ---
 
+## 🖥️ Running the Interactive 3D Web Editor (SaaS Web App)
+
+You can run the interactive, browser-based 3D visual editor locally on your machine to draw, upload, compile, and play your 3D spatial mixes in real-time:
+
+1.  **Install Python Dependencies**:
+    ```bash
+    pip install -r requirements.txt
+    ```
+2.  **Start the FastAPI Server**:
+    ```bash
+    uvicorn app:app --reload
+    ```
+3.  **Open in Your Browser**:
+    Navigate to **`http://127.0.0.1:8000`** in any modern web browser. You can now visually drag-and-drop custom audio files, choreograph tilted orbits with simple sliders, and click **`Render & Play`** to instantly compile in Rust and stream a stereo-binaural preview directly in the browser!
+
+---
+
+## 🐳 Running via Docker (Containerized SaaS)
+
+Alternatively, you can launch the entire Atmosphere platform (Rust compiler + FastAPI backend + FFmpeg encoder + pre-synthesized assets) inside a containerized, self-contained Docker environment with a single command:
+
+1.  **Build and Run the Docker Image**:
+    ```bash
+    docker build -t atmosphere .
+    docker run -p 8000:8000 atmosphere
+    ```
+2.  **Open in Browser**:
+    Navigate to **`http://127.0.0.1:8000`**! The container automatically compiles your Rust binary, synthesizes all the demo sound effects on startup, and is fully ready to render and play.
+
+---
+
 ## 🚀 Showroom Demos (Try These!)
 
 To keep the repository **100% legal, clean, and lightweight**, ASSC does not bundle heavy audio files. Instead, it includes a **Procedural Audio Synthesizer** that generates high-quality sound assets from pure mathematical equations directly on your machine!
