@@ -1,5 +1,7 @@
 # ASSC: Atmosphere Spatial Audio Compiler 🔊🛰️
 
+![Atmosphere Spatial Audio Editor Interface](atmosphere.png)
+
 **ASSC** (Atmosphere Spatial Audio Compiler) is a high-performance spatial audio compiler written in **Rust**, designed to compile declarative 3D audio object definitions into immersive, cinema-grade spatial audio scenes. 
 
 The system parses a scene definition file (**.jaff** — *JSON Atmosphere File Format*), evaluates mathematical trajectory expressions on-the-fly, simulates real-world physical acoustic propagation, and renders the final scene into a high-fidelity, fully compliant **12-channel 7.1.4 multi-channel WAV** file (`WAVEFORMATEXTENSIBLE`).
