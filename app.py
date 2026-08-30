@@ -3,7 +3,8 @@ import json
 import subprocess
 import tempfile
 import uuid
-from fastapi import FastAPI, Request, HTTPException
+import shutil
+from fastapi import FastAPI, Request, HTTPException, UploadFile, File
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -107,4 +108,72 @@ async def render_scene(payload: dict):
 
     except Exception as e:
         print(f"Render exception: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# GET /assets: Scans the assets/ folder for compliant .wav files and returns them
+@app.get("/assets")
+async def list_assets():
+    try:
+        assets_dir = os.path.join(os.path.dirname(__file__), "assets")
+        if not os.path.exists(assets_dir):
+            return []
+        
+        # List all .wav files in assets/
+        files = [
+            f for f in os.listdir(assets_dir)
+            if f.endswith(".wav") and os.path.isfile(os.path.join(assets_dir, f))
+        ]
+        return sorted(files)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# POST /assets/upload: Handles uploading custom audio files, converting them on-the-fly to 48kHz mono WAV
+@app.post("/assets/upload")
+async def upload_asset(file: UploadFile = File(...)):
+    try:
+        # Sanitize filename (remove spaces, resolve extension)
+        safe_filename = file.filename.replace(" ", "_")
+        name, ext = os.path.splitext(safe_filename)
+        
+        # Temp save path for raw uploaded file
+        temp_dir = tempfile.gettempdir()
+        temp_upload_path = os.path.join(temp_dir, f"raw_{uuid.uuid4()}{ext}")
+        
+        with open(temp_upload_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+            
+        # Target wav path inside compiler assets directory
+        assets_dir = os.path.join(os.path.dirname(__file__), "assets")
+        os.makedirs(assets_dir, exist_ok=True)
+        
+        target_wav_name = f"uploaded_{name}.wav"
+        target_wav_path = os.path.join(assets_dir, target_wav_name)
+        
+        # Spawn FFmpeg to convert raw file (MP3, WAV, FLAC, etc.) to 48kHz mono WAV
+        ffmpeg_cmd = [
+            "ffmpeg", "-y", "-i", temp_upload_path,
+            "-ac", "1", "-ar", "48000", target_wav_path
+        ]
+        print(f"Uploading & Converting: {' '.join(ffmpeg_cmd)}")
+        res = subprocess.run(ffmpeg_cmd, capture_output=True, text=True)
+        
+        # Cleanup temp upload file
+        try:
+            os.remove(temp_upload_path)
+        except OSError:
+            pass
+            
+        if res.returncode != 0:
+            print(f"FFmpeg upload conversion failed: {res.stderr}")
+            raise HTTPException(status_code=500, detail=f"Audio conversion failed: {res.stderr}")
+            
+        return {
+            "success": True,
+            "filename": target_wav_name,
+            "path": f"assets/{target_wav_name}"
+        }
+    except Exception as e:
+        print(f"Upload exception: {e}")
         raise HTTPException(status_code=500, detail=str(e))

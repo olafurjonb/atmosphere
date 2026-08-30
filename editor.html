@@ -157,8 +157,18 @@
                             </div>
                             <div class="space-y-1.5">
                                 <label class="text-[11px] font-bold text-zinc-500 uppercase font-mono">Audio Stem File</label>
-                                <input type="text" id="input-sound-file" value="assets/real_ww2_flypast.wav" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors">
+                                <select id="select-sound-file" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-indigo-400 font-semibold focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer">
+                                    <!-- Dynamically populated via GET /assets -->
+                                </select>
                             </div>
+                        </div>
+                        
+                        <!-- Drag and Drop Upload Zone -->
+                        <div id="upload-zone" class="border-2 border-dashed border-zinc-800 hover:border-indigo-500/50 bg-zinc-900/30 hover:bg-indigo-500/5 p-4 rounded-xl text-center cursor-pointer transition-all flex flex-col items-center justify-center space-y-1 group">
+                            <span class="text-xl group-hover:scale-110 transition-transform">📤</span>
+                            <span class="text-xs font-bold text-zinc-300">Drag & Drop custom audio files here</span>
+                            <span class="text-[10px] text-zinc-500 font-mono">Supports MP3, WAV, FLAC, OGG (Converts to 48kHz Mono)</span>
+                            <input type="file" id="input-file-upload" class="hidden" accept="audio/*">
                         </div>
                         <!-- Temporal Parameters -->
                         <div class="grid grid-cols-3 gap-4 pt-1 border-t border-zinc-900/50">
@@ -358,7 +368,7 @@
             {
                 id: "obj-1",
                 title: "Spitfire Engine",
-                soundFile: "assets/real_ww2_flypast.wav",
+                soundFile: "real_ww2_flypast.wav",
                 shape: "line",
                 plane: "vertical-yz",
                 angle: 45,
@@ -373,7 +383,7 @@
             {
                 id: "obj-2",
                 title: "M1 Garand Gunshot",
-                soundFile: "assets/real_m1_garand.wav",
+                soundFile: "real_m1_garand.wav",
                 shape: "line",
                 plane: "horizontal",
                 angle: 0,
@@ -424,7 +434,9 @@
         const chkLoop = document.getElementById('chk-loop');
         
         const inputSceneTitle = document.getElementById('input-scene-title');
-        const inputSoundFile = document.getElementById('input-sound-file');
+        const selectSoundFile = document.getElementById('select-sound-file');
+        const uploadZone = document.getElementById('upload-zone');
+        const inputFileUpload = document.getElementById('input-file-upload');
         
         const codeJaff = document.getElementById('code-jaff');
         const btnCopy = document.getElementById('btn-copy');
@@ -672,7 +684,7 @@
             if (!obj) return;
 
             inputObjectTitle.value = obj.title;
-            inputSoundFile.value = obj.soundFile;
+            selectSoundFile.value = obj.soundFile;
             
             selectShape.value = obj.shape;
             selectPlane.value = obj.plane;
@@ -704,7 +716,7 @@
             if (!obj) return;
 
             obj.title = inputObjectTitle.value;
-            obj.soundFile = inputSoundFile.value;
+            obj.soundFile = selectSoundFile.value;
             obj.shape = selectShape.value;
             obj.plane = selectPlane.value;
             obj.startX = parseFloat(numStartX.value) || 0.0;
@@ -772,7 +784,7 @@
                 return {
                     metadata: {
                         title: obj.title,
-                        source_sound_file: obj.soundFile
+                        source_sound_file: "assets/" + obj.soundFile
                     },
                     temporal: {
                         start_offset: parseFloat(obj.startOffset !== undefined ? obj.startOffset : 0.0),
@@ -843,7 +855,7 @@
 
             // Field text updates
             inputObjectTitle.addEventListener('input', () => { saveControlsToActiveObject(); });
-            inputSoundFile.addEventListener('input', () => { saveControlsToActiveObject(); });
+            selectSoundFile.addEventListener('change', () => { saveControlsToActiveObject(); });
             selectShape.addEventListener('change', () => { saveControlsToActiveObject(); updatePathLine(); });
             selectPlane.addEventListener('change', () => { saveControlsToActiveObject(); updatePathLine(); });
             
@@ -1036,14 +1048,140 @@
             renderer.render(scene, camera);
         }
 
+        // --- 7. Asset Manager Web Fetch & Uploader Helpers ---
+        // Fetch compliant .wav assets list from FastAPI and populate the dropdown select list
+        function fetchServerAssets(selectedFilenameToRestore = null) {
+            return fetch("/assets")
+                .then(res => res.json())
+                .then(files => {
+                    selectSoundFile.innerHTML = "";
+                    if (files.length === 0) {
+                        const opt = document.createElement('option');
+                        opt.value = "";
+                        opt.textContent = "No WAV files available in assets/";
+                        selectSoundFile.appendChild(opt);
+                        return;
+                    }
+
+                    files.forEach(f => {
+                        const opt = document.createElement('option');
+                        opt.value = f;
+                        opt.textContent = f;
+                        selectSoundFile.appendChild(opt);
+                    });
+
+                    // Restore selection for active object
+                    const activeObj = sceneObjects.find(o => o.id === activeObjectId);
+                    if (activeObj) {
+                        // Priority: 1. Newly uploaded filename, 2. Existing activeObj filename, 3. Default first file
+                        const targetVal = selectedFilenameToRestore || activeObj.soundFile;
+                        
+                        // Check if targetValue exists in the select dropdown list
+                        const exists = Array.from(selectSoundFile.options).some(opt => opt.value === targetVal);
+                        if (exists) {
+                            selectSoundFile.value = targetVal;
+                            activeObj.soundFile = targetVal;
+                        } else {
+                            // If missing, default to first available wav file
+                            activeObj.soundFile = selectSoundFile.value;
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error("Failed to load server assets:", err);
+                    selectSoundFile.innerHTML = "<option value=''>Error loading assets</option>";
+                });
+        }
+
+        // Initialize drag-and-drop and click upload handlers for upload-zone
+        function initUploadDragAndDrop() {
+            // Click to trigger hidden input file upload picker
+            uploadZone.addEventListener('click', () => {
+                inputFileUpload.click();
+            });
+
+            inputFileUpload.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    uploadFile(e.target.files[0]);
+                }
+            });
+
+            // Drag and drop events
+            uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone.classList.add('border-indigo-500', 'bg-indigo-500/10');
+                uploadZone.classList.remove('border-zinc-800', 'bg-zinc-900/30');
+            });
+
+            uploadZone.addEventListener('dragleave', () => {
+                uploadZone.classList.remove('border-indigo-500', 'bg-indigo-500/10');
+                uploadZone.classList.add('border-zinc-800', 'bg-zinc-900/30');
+            });
+
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('border-indigo-500', 'bg-indigo-500/10');
+                uploadZone.classList.add('border-zinc-800', 'bg-zinc-900/30');
+                
+                if (e.dataTransfer.files.length > 0) {
+                    uploadFile(e.dataTransfer.files[0]);
+                }
+            });
+        }
+
+        // Upload file via POST FormData REST API
+        function uploadFile(file) {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            // Set visual uploading indicators
+            const originalHTML = uploadZone.innerHTML;
+            uploadZone.innerHTML = `
+                <span class="text-xl animate-spin inline-block mb-1">⏳</span>
+                <span class="text-xs font-bold text-indigo-400">Uploading and converting ${file.name}...</span>
+                <span class="text-[10px] text-zinc-500 font-mono">Running FFmpeg 48kHz mono WAV translation</span>
+            `;
+            uploadZone.style.pointerEvents = "none";
+
+            fetch("/assets/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(err => { throw new Error(err.detail || "Upload failed") });
+                }
+                return res.json();
+            })
+            .then(data => {
+                // Success! Refresh list and force-select this newly uploaded file for active object!
+                fetchServerAssets(data.filename).then(() => {
+                    saveControlsToActiveObject();
+                });
+                alert(`Upload Success!\nConverted and saved as: ${data.filename}`);
+            })
+            .catch(err => {
+                console.error("Upload error:", err);
+                alert("Upload failed: " + err.message);
+            })
+            .finally(() => {
+                // Restore upload zone default style
+                uploadZone.innerHTML = originalHTML;
+                uploadZone.style.pointerEvents = "auto";
+            });
+        }
+
         // --- Start Application ---
         init3D();
         syncOutlinerDropdown();
-        loadActiveObjectToControls();
-        updatePathLine();
-        updateAllObjectPositions();
-        setupEventListeners();
+        initUploadDragAndDrop();
+        fetchServerAssets().then(() => {
+            loadActiveObjectToControls();
+            updatePathLine();
+            updateAllObjectPositions();
+        });
         animate();
+        setupEventListeners();
 
     </script>
 </body>
