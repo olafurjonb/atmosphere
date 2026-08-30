@@ -3,4 +3,5 @@
 assets/*.wav
 assets/mp3/
 static/renders/
+!static/renders/.gitkeep
 __pycache__/
