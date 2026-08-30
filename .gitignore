@@ -2,3 +2,5 @@
 *.wav
 assets/*.wav
 assets/mp3/
+static/renders/
+__pycache__/
