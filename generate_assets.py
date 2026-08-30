@@ -34,26 +34,48 @@ def main():
     sr = 48000
     random.seed(42) # Deterministic noise
 
-    # --- PART 1: CONVERT USER'S ROYALTY-FREE MP3 RECORDINGS TO THE EXPECTED WAV FILENAMES ---
-    print("\n--- Processing Royalty-Free Audio Recordings ---")
+    # --- PART 1: FUZZY KEYWORD MATCHING FOR USER'S ROYALTY-FREE MP3 RECORDINGS ---
+    print("\n--- Processing Royalty-Free Audio Recordings (Fuzzy Keyword Matching) ---")
     rf_dir = "assets/royality-free"
     
-    # Mapping of source MP3s to their panner/compiler expected WAV target filenames
-    audio_mappings = {
-        "freesound_community-spitfire-close-1-34153.mp3": "assets/real_spitfire_close.wav",
-        "scottishperson-sound-effect-ww2-fighter-plane-fly-past-333257.mp3": "assets/real_ww2_flypast.wav",
-        "scottishperson-sound-effect-ww2-fighter-plane-takeoff-333260.mp3": "assets/real_ww2_takeoff.wav",
-        "freesound_community-low-airplane-fly-by-90354.mp3": "assets/real_low_flyby.wav",
-        "freesound_community-m1-garand-rifle-80192.mp3": "assets/real_m1_garand.wav"
-    }
+    # Keyword matchers mapped to their expected compiler target filenames
+    # This allows file names with extra numbers, suffixes, or hashes to match cleanly!
+    keyword_matchers = [
+        ("spitfire", "assets/real_spitfire_close.wav"),
+        ("fly-past", "assets/real_ww2_flypast.wav"),
+        ("fly_past", "assets/real_ww2_flypast.wav"),       # Fallback spellings
+        ("flypast", "assets/real_ww2_flypast.wav"),        # Fallback spellings
+        ("takeoff", "assets/real_ww2_takeoff.wav"),
+        ("take-off", "assets/real_ww2_takeoff.wav"),       # Fallback spellings
+        ("low-airplane-fly-by", "assets/real_low_flyby.wav"),
+        ("airplane-fly-by", "assets/real_low_flyby.wav"),   # Fallback spellings
+        ("garand", "assets/real_m1_garand.wav"),
+        ("m1", "assets/real_m1_garand.wav")                 # Fallback spellings
+    ]
 
     if os.path.exists(rf_dir):
-        for mp3_name, wav_name in audio_mappings.items():
-            mp3_path = os.path.join(rf_dir, mp3_name)
-            if os.path.exists(mp3_path):
-                convert_mp3_to_wav(mp3_path, wav_name)
+        all_files = os.listdir(rf_dir)
+        processed_targets = set()
+
+        for kw, target_wav in keyword_matchers:
+            # Skip if we already successfully compiled a file for this target
+            if target_wav in processed_targets:
+                continue
+
+            # Look for any .mp3 file in the directory containing our keyword (case-insensitive)
+            matched_file = None
+            for f in all_files:
+                if kw in f.lower() and f.lower().endswith(".mp3"):
+                    matched_file = f
+                    break
+            
+            if matched_file:
+                mp3_path = os.path.join(rf_dir, matched_file)
+                if convert_mp3_to_wav(mp3_path, target_wav):
+                    processed_targets.add(target_wav)
             else:
-                print(f"Warning: Source MP3 file not found: {mp3_path}")
+                # Soft warning, don't crash the script
+                print(f"Notice: No local MP3 found containing keyword '{kw}' for target '{target_wav}'.")
     else:
         print(f"Warning: Directory '{rf_dir}' does not exist.")
 
